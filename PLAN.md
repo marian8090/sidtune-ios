@@ -51,7 +51,7 @@ SIDtune-iOS/
 | `cache.worker.ts` | Optional pre-render on a second thread into a chunk array | Measure first: native reSIDfp may fast-forward quickly enough that the cache only matters for long tunes |
 | `media-anchor.ts` | `AVAudioSession(.playback)`, `MPNowPlayingInfoCenter`, `MPRemoteCommandCenter` (play/pause, next/prev, seek, like) | Replaces the silent-audio hack; add `UIBackgroundModes: audio` |
 | `fx.ts` | `FXChain`: own DSP in Swift/C (biquads for the LR8 crossover and 3-band EQ, wide-mono delay, ping-pong delay, convolution reverb via Accelerate/vDSP, REAL speaker chain), run in the render path | Built-in `AVAudioUnitReverb`/`Delay` can't reproduce these modes. Same parameter tables as `fx.ts`; glide parameter changes |
-| `export.worker.ts`, `flac.ts`, `encoders.ts` | `Exporter`: offline render at 44.1 kHz. WAV and FLAC via `AVAudioFile`/ExtAudioFile, M4A (AAC/ALAC), MP3 via LAME if wanted | Apple has no built-in MP3 encoder. Hand off via `ShareLink`/`fileExporter` |
+| `export.worker.ts`, `flac.ts`, `encoders.ts` (dropped on iOS) | `Exporter`: offline render at 44.1 kHz. WAV and FLAC via `AVAudioFile`/ExtAudioFile, M4A (AAC/ALAC), MP3 via LAME if wanted | Apple has no built-in MP3 encoder. Hand off via `ShareLink`/`fileExporter` |
 | `psid.ts`, `songlengths.ts`, `stil.ts` | `PSIDHeader`, `Songlengths` (MD5 via CryptoKit, md5 from the engine), `STIL` | Straight ports |
 | `db.ts` (IndexedDB: meta, files, kv) | SQLite via GRDB: `tunes` table with FTS5 for search, `favorites`, `playlists`, `history`; tune files in Application Support / Caches | Search across 60,000+ tunes is instant with FTS5. SwiftData is too slow for this size |
 | `prefs.ts`, `Settings` | `UserDefaults` / `@AppStorage` | Theme, font, tooltips, engine settings |
@@ -91,6 +91,36 @@ SIDtune-iOS/
 7. **Release prep.** App icon, launch screen, privacy manifest (no tracking, no data collected), credits screen, TestFlight, App Store.
 
 Milestone 1 is the only real unknown. Everything after it is a straightforward port of code that already works.
+
+### Milestone 1 results (2026-10-28)
+
+- libsidplayfp 3.x moved reSIDfp into a separate library, so both libsidplayfp 3.1.2 and libresidfp 1.2.3 are vendored. SIDLite is
+  part of libsidplayfp. Everything builds from source through SwiftPM with hand-written config headers; no cmake or autotools needed.
+- Speed rendering Commando (Rob Hubbard) at 48 kHz: reSIDfp **31x realtime**, SIDLite **150–166x**, on both the Mac (`swift test -c
+  release`) and the iPhone 17 simulator. The web app's WASM reSIDfp manages about 7x. Still to do: measure on a real iPhone with the
+  in-app "Measure emulation speed" button.
+- Conclusions so far: reSIDfp can be the default on every device, with SIDLite kept as an option. A forward seek of one minute costs
+  about 2 s of fast-forwarding, so the pre-render cache is still worth porting for instant seeks, but it's no longer essential.
+- The spike app (`SpikeView`) plays a bundled tune through the ring-buffer `PlaybackEngine`, switches subtunes and engines, and runs
+  with no underruns. Milestone 2 replaces it.
+
+### Milestones 2–6 (2026-10-28)
+
+Ported in one pass: playback core (seek with the instant-seek cache, subtunes, voice mutes, song lengths, auto-advance, background
+audio, lock screen, interruptions), the library (online HVSC catalogue with offline download, import of folders/files/zips,
+Songlengths, STIL, search, sort, favorites, playlists, history), the iPhone and iPad UI, settings, themes and fonts, the five audio
+quality modes and the EQ, the visualiser, export (SID, FLAC, WAV, AAC), share links and iPad keyboard shortcuts.
+
+Deviations from the plan above: the library stays in memory with JSON files on disk (like the web app's IndexedDB use) instead of
+GRDB, which is fast enough for 61,000 tunes with the memmem search index; MP3 export is AAC instead; JetBrains Mono is the system
+monospaced font.
+
+Follow-up the same day: export (save as SID/FLAC/WAV/AAC) was removed as not needed on iOS; the HVSC catalogue became opt-in
+(the empty library offers the download, nothing is bundled); the letter covers were dropped from the list and Now Playing, which now
+fits an iPhone screen without scrolling.
+
+Not checked yet: importing through the Files picker, the full offline download (about 350 MB), lock-screen controls on a device,
+and the real-device speed.
 
 ## 6. Testing
 

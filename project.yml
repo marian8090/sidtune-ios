@@ -1,0 +1,78 @@
+# XcodeGen spec. SIDtune.xcodeproj is generated from this file: edit here, then run `xcodegen generate`.
+name: SIDtune
+options:
+  bundleIdPrefix: com.marianfujara
+  deploymentTarget:
+    iOS: "18.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "0.2.0"
+    CURRENT_PROJECT_VERSION: "2"
+packages:
+  SIDEngine:
+    path: Packages/SIDEngine
+targets:
+  SIDtune:
+    type: application
+    platform: iOS
+    sources:
+      - SIDtune
+    dependencies:
+      - package: SIDEngine
+        products: [SIDEngine, SIDLibrary, SIDFX]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.marianfujara.sidtune
+        DEVELOPMENT_TEAM: 6ZS76ZXWNN
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SUPPORTS_MACCATALYST: NO
+        ENABLE_PREVIEWS: YES
+      configs:
+        Debug:
+          # The FX chain runs per sample on the render thread; unoptimised Swift is too slow for it.
+          SWIFT_OPTIMIZATION_LEVEL: "-O"
+    info:
+      path: SIDtune/Info.plist
+      properties:
+        CFBundleDisplayName: SIDtune
+        LSApplicationCategoryType: public.app-category.music
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        # The online HVSC catalogue (see the web app's docs/HVSC-HOSTING.md). Empty turns the feature off.
+        HVSCURL: https://pub-0f462e943b344646abb5842cc55f2898.r2.dev
+        UIBackgroundModes: [audio]
+        UILaunchScreen: {}
+        UIAppFonts: [PetMe64.ttf, PrintChar21.ttf]
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        UISupportedInterfaceOrientations:
+          [UIInterfaceOrientationPortrait, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
+        UISupportedInterfaceOrientations~ipad:
+          [UIInterfaceOrientationPortrait, UIInterfaceOrientationPortraitUpsideDown, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
+        LSSupportsOpeningDocumentsInPlace: false
+        CFBundleURLTypes:
+          - CFBundleURLName: com.marianfujara.sidtune
+            CFBundleURLSchemes: [sidtune]
+        UTImportedTypeDeclarations:
+          - UTTypeIdentifier: com.marianfujara.sidtune.sid
+            UTTypeDescription: SID tune
+            UTTypeConformsTo: [public.data]
+            UTTypeTagSpecification:
+              public.filename-extension: [sid]
+        CFBundleDocumentTypes:
+          - CFBundleTypeName: SID tune
+            CFBundleTypeRole: Viewer
+            LSHandlerRank: Owner
+            LSItemContentTypes: [com.marianfujara.sidtune.sid]
+schemes:
+  SIDtune:
+    build:
+      targets:
+        SIDtune: all
+    test:
+      targets:
+        - package: SIDEngine/SIDEngineTests
+        - package: SIDEngine/SIDLibraryTests
+        - package: SIDEngine/SIDFXTests
