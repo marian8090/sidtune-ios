@@ -8,11 +8,14 @@ struct SettingsView: View {
     @Environment(\.theme) private var theme
     @Environment(\.dismiss) private var dismiss
     @State private var picking: Pick?
+    @State private var importerShown = false
     @State private var confirmClear = false
     @State private var confirmDeleteOffline = false
+    @State private var exportingBackup: BackupDocument?
+    @State private var restoreURL: URL?
 
     enum Pick: Identifiable {
-        case songlengths, stil, kernal, basic, chargen
+        case songlengths, stil, kernal, basic, chargen, backup
         var id: Self { self }
     }
 
@@ -24,6 +27,7 @@ struct SettingsView: View {
                 if model.hvscAvailable { hvsc }
                 collection
                 roms
+                backup
                 library
                 Section {
                     Button("About SIDtune") {
@@ -43,7 +47,7 @@ struct SettingsView: View {
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
-            .fileImporter(isPresented: Binding(get: { picking != nil }, set: { if !$0 { picking = nil } }), allowedContentTypes: [.data, .plainText]) { result in
+            .fileImporter(isPresented: $importerShown, allowedContentTypes: [.data, .plainText]) { result in
                 guard case .success(let url) = result, let pick = picking else { return }
                 switch pick {
                 case .songlengths: model.importCollectionFile(url, kind: .songlengths)
@@ -51,7 +55,18 @@ struct SettingsView: View {
                 case .kernal: model.setROM(url, kind: \.kernal, size: 8192)
                 case .basic: model.setROM(url, kind: \.basic, size: 8192)
                 case .chargen: model.setROM(url, kind: \.chargen, size: 4096)
+                case .backup: restoreURL = url
                 }
+            }
+            .fileExporter(isPresented: Binding(get: { exportingBackup != nil }, set: { if !$0 { exportingBackup = nil } }),
+                          document: exportingBackup, contentType: .json, defaultFilename: BackupDocument.defaultFilename) { result in
+                if case .failure(let error) = result { model.message = "Could not save the backup: \(error.localizedDescription)" }
+            }
+            .confirmationDialog("Restore this backup?", isPresented: Binding(get: { restoreURL != nil }, set: { if !$0 { restoreURL = nil } }),
+                                titleVisibility: .visible, presenting: restoreURL) { url in
+                Button("Restore", role: .destructive) { model.restoreBackup(from: url) }
+            } message: { _ in
+                Text("Your current favorites, playlists, history and settings are replaced.")
             }
             .confirmationDialog("Clear the library?", isPresented: $confirmClear, titleVisibility: .visible) {
                 Button("Clear library", role: .destructive) { model.wipeLibrary() }
@@ -157,10 +172,10 @@ struct SettingsView: View {
 
     private var collection: some View {
         Section {
-            Button { picking = .songlengths } label: {
+            Button { pick(.songlengths) } label: {
                 LabeledContent("Song lengths", value: model.songlengths.map { "\($0.count.formatted()) tunes" } ?? "Not loaded")
             }
-            Button { picking = .stil } label: {
+            Button { pick(.stil) } label: {
                 LabeledContent("STIL notes", value: model.stil.isEmpty ? "Not loaded" : "\(model.stil.count.formatted()) entries")
             }
         } header: {
@@ -188,11 +203,27 @@ struct SettingsView: View {
     }
 
     private func romRow(_ label: String, have: Bool, pick: Pick) -> some View {
-        Button { picking = pick } label: {
+        Button { self.pick(pick) } label: {
             LabeledContent(label) {
                 Image(systemName: have ? "checkmark.circle.fill" : "plus.circle").foregroundStyle(have ? theme.accentStrong : theme.muted)
             }
         }
+    }
+
+    private var backup: some View {
+        Section {
+            Button("Save backup") { exportingBackup = model.backupDocument() }
+            Button("Restore a backup") { pick(.backup) }
+        } header: {
+            Text("Backup")
+        } footer: {
+            Text("""
+            Saves your \(model.favorites.count.formatted()) favorites and \(model.playlists.count) playlists, plus history and \
+            settings, as a small file. It is the same file the SIDtune web app saves, so you can move between the two or to \
+            another device. Restoring replaces what's here. Imported tunes are not included.
+            """)
+        }
+        .listRowBackground(theme.panel)
     }
 
     private var library: some View {
@@ -206,6 +237,12 @@ struct SettingsView: View {
             Text("Removes imported tunes, song lengths and STIL. Favorites and playlists are kept.")
         }
         .listRowBackground(theme.panel)
+    }
+
+    /// `picking` outlives the importer's isPresented binding, which is reset before the completion handler runs.
+    private func pick(_ p: Pick) {
+        picking = p
+        importerShown = true
     }
 
     private func bytes(_ n: Int64) -> String {

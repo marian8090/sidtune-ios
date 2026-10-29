@@ -110,6 +110,8 @@ final class AppModel {
     @ObservationIgnored private var currentData: [UInt8]?
     @ObservationIgnored private var queue: [String] = []
     @ObservationIgnored private var queueIndex = -1
+    /// The list the queue was started from. While it is on screen, the queue follows it, so a new search or sort changes what plays next.
+    @ObservationIgnored private var queueView: View?
     @ObservationIgnored private var played: [String] = []
     @ObservationIgnored private var playToken = 0
     @ObservationIgnored private var ticker: Timer?
@@ -215,6 +217,15 @@ final class AppModel {
                 return q.isEmpty || searchIndex.matches(q, at: i) ? tunes[i] : nil
             }
         }
+        followVisible()
+    }
+
+    private func followVisible() {
+        // a search with no matches (often half-typed) keeps the previous queue rather than leaving nothing to play
+        guard view == queueView, !visible.isEmpty else { return }
+        queue = visible.map(\.path)
+        // -1 when the playing tune is filtered out: next then starts from the top of the new list
+        queueIndex = current.flatMap { queue.firstIndex(of: $0.path) } ?? -1
     }
 
     func viewTitle(_ v: View) -> String {
@@ -530,6 +541,7 @@ final class AppModel {
 
     /// Starts a tune from the visible list so next/previous follow what the user sees.
     func playFromList(_ path: String, song: Int? = nil) {
+        queueView = view
         queue = visible.map(\.path)
         queueIndex = queue.firstIndex(of: path) ?? -1
         if queueIndex < 0 {
@@ -542,6 +554,7 @@ final class AppModel {
 
     func playPaths(_ paths: [String], first: Int = 0) {
         guard !paths.isEmpty else { return }
+        queueView = nil
         queue = paths
         queueIndex = first
         played = []
@@ -585,6 +598,10 @@ final class AppModel {
             return
         }
         if let c = current { played.append(c.path) }
+        if !auto && queueRanOut && adoptVisibleQueue() {
+            start(queue[queueIndex], song: nil)
+            return
+        }
         if settings.shuffle && queue.count > 1 {
             var i = queueIndex
             while i == queueIndex { i = Int.random(in: 0..<queue.count) }
@@ -600,6 +617,20 @@ final class AppModel {
             return
         }
         start(queue[queueIndex], song: nil)
+    }
+
+    private var queueRanOut: Bool {
+        queue.count <= 1 || (settings.repeatMode != .all && queueIndex + 1 >= queue.count)
+    }
+
+    /// Switches the queue to the list on screen, positioned just after the playing tune (or at its top).
+    private func adoptVisibleQueue() -> Bool {
+        guard view != queueView, !visible.isEmpty else { return false }
+        queueView = view
+        queue = visible.map(\.path)
+        let at = current.flatMap { queue.firstIndex(of: $0.path) } ?? -1
+        queueIndex = at + 1 < queue.count ? at + 1 : 0
+        return true
     }
 
     func previous() {
@@ -734,6 +765,11 @@ final class AppModel {
         let trimmed = name.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty, let i = collections.playlists.firstIndex(where: { $0.id == id }) else { return }
         collections.playlists[i].name = trimmed
+    }
+
+    func replaceCollections(_ c: UserCollections) {
+        collections = c
+        if case .playlist(let id) = view, !c.playlists.contains(where: { $0.id == id }) { view = .all }
     }
 
     func clearHistory() {

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SIDtune — Support</title>
+<meta name="description" content="Get help with SIDtune for iPhone and iPad: contact the developer, common questions and troubleshooting.">
+<meta name="theme-color" content="#120e27">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="index.html"><img src="icon.svg" alt="" width="36" height="36"><b>SIDTUNE<span>C64 music for iPhone &amp; iPad</span></b></a>
+    <nav class="topnav" aria-label="Site">
+      <a href="index.html">Home</a>
+      <a href="guide.html">Guide</a>
+      <a href="privacy.html">Privacy<span class="long"> Policy</span></a>
+      <a href="support.html" aria-current="page">Support</a>
+    </nav>
+  </div>
+</header>
+
+<main class="page">
+  <h1>Support</h1>
+  <p>Questions, bug reports and suggestions are all welcome. SIDtune is made by one person, and I read every message.</p>
+
+  <div class="contact-card">
+    <img src="icon.svg" alt="" width="96" height="96">
+    <div>
+      <div class="name">Marian Fujara</div>
+      <div class="role">Developer of SIDtune</div>
+      <a class="email" href="mailto:marian.fujara@gmail.com?subject=SIDtune%20support">marian.fujara@gmail.com</a>
+      <div><a class="btn" href="mailto:marian.fujara@gmail.com?subject=SIDtune%20support">Email support</a></div>
+    </div>
+  </div>
+
+  <h2>When reporting a problem</h2>
+  <p>It helps to include:</p>
+  <ul>
+    <li>your device (for example iPhone 15 or iPad Air) and iOS / iPadOS version;</li>
+    <li>the SIDtune version (shown in <em>Settings</em>);</li>
+    <li>the tune's path (for example <code>/MUSICIANS/H/Hubbard_Rob/Commando.sid</code>) and subtune, if the problem is with a particular tune;</li>
+    <li>what you did, what you expected and what happened instead. A screenshot or screen recording helps too.</li>
+  </ul>
+
+  <h2>Common questions</h2>
+  <dl class="faq">
+    <dt>The library is empty. Where is the music?</dt>
+    <dd>No music ships with the app. Tap <em>Download the HVSC</em> to add the online High Voltage SID Collection (60,000+ tunes), or import your own <code>.sid</code> files, folders or zips with <kbd>+</kbd>. See <a href="guide.html#music">Getting music</a>.</dd>
+
+    <dt>Can I listen without a connection?</dt>
+    <dd>Yes. Tunes you have played are kept on your device, and <em>Settings → Online HVSC → Download the whole collection</em> stores all of them (about 350&nbsp;MB). Imported files are always available offline.</dd>
+
+    <dt>There's no sound.</dt>
+    <dd>Check the volume. SIDtune plays even with the silent switch on.</dd>
+
+    <dt>Playback stutters on my older device.</dt>
+    <dd>Choose SIDLite under <em>Settings → Sound → Emulation engine</em>, and turn off Instant seeking. See <a href="guide.html#emulation">Emulation settings</a>.</dd>
+
+    <dt>A tune plays silence or garbage.</dt>
+    <dd>It may need the C64's KERNAL, BASIC and CHARGEN ROMs, which SIDtune cannot include for copyright reasons. If you own copies, add them under <em>Settings → C64 ROMs</em>. See <a href="guide.html#roms">C64 ROMs</a>.</dd>
+
+    <dt>A tune stops too early or keeps going.</dt>
+    <dd>Its length is missing or wrong in HVSC's song-length database, so the default length from Settings is used.</dd>
+
+    <dt>How do I move my favorites to a new device, or to the SIDtune web app?</dt>
+    <dd>Use <em>Settings → Backup → Save backup</em>, then <em>Restore a backup</em> on the other device. The web app uses the same file. See <a href="guide.html#data">Your data</a>.</dd>
+
+    <dt>Does SIDtune collect any data about me?</dt>
+    <dd>No. There are no accounts, analytics, tracking or ads. See the <a href="privacy.html">Privacy Policy</a>.</dd>
+  </dl>
+
+  <p class="muted">The full <a href="guide.html">User Guide</a> covers every feature, including <a href="guide.html#controls">keyboard shortcuts</a> on iPad.</p>
+</main>
+
+<footer class="site-footer">
+  <span>© 2026 Marian Fujara</span>
+  <a href="index.html">Home</a>
+  <a href="guide.html">Guide</a>
+  <a href="privacy.html">Privacy Policy</a>
+  <span class="spacer">The tunes belong to their composers. HVSC is a volunteer archive.</span>
+</footer>
+
+</body>
+</html>

@@ -105,6 +105,7 @@ struct TrackListView: View {
             } label: {
                 Label("Play", systemImage: "play.fill")
             }
+            .fixedSize()
             Button {
                 let paths = model.visible.map(\.path)
                 model.settings.shuffle = true
@@ -112,6 +113,8 @@ struct TrackListView: View {
             } label: {
                 Label("Shuffle", systemImage: "shuffle")
             }
+            // In the iPad's middle column next to Now Playing the label otherwise wraps to "Shuff / le".
+            .fixedSize()
         }
         .buttonStyle(.bordered)
         .controlSize(.small)

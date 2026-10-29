@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SIDtune — Commodore 64 music player for iPhone and iPad</title>
+<meta name="description" content="SIDtune plays Commodore 64 SID music on iPhone and iPad with cycle-exact emulation of the C64 and its SID chip. No accounts, no tracking, no ads.">
+<meta name="theme-color" content="#120e27">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="index.html"><img src="icon.svg" alt="" width="36" height="36"><b>SIDTUNE<span>C64 music for iPhone &amp; iPad</span></b></a>
+    <nav class="topnav" aria-label="Site">
+      <a href="index.html" aria-current="page">Home</a>
+      <a href="guide.html">Guide</a>
+      <a href="privacy.html">Privacy<span class="long"> Policy</span></a>
+      <a href="support.html">Support</a>
+    </nav>
+  </div>
+</header>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="eyebrow">FOR IPHONE &amp; IPAD</div>
+      <h1>SIDTUNE<small>The sound of the Commodore 64, in your pocket</small></h1>
+      <p class="lead">SIDtune plays Commodore 64 music. It emulates the C64 and its SID sound chip cycle by cycle, so the tunes sound the way they did on the real machine. Browse the whole High Voltage SID Collection, or bring your own <code>.sid</code> files.</p>
+      <div class="actions">
+        <a class="btn" href="guide.html">Read the guide</a>
+        <a class="btn ghost" href="support.html">Get help</a>
+      </div>
+      <div class="meta"><span>60,000+ tunes in HVSC</span><span>Cycle-exact emulation</span><span>Works offline</span><span>No accounts, no tracking</span></div>
+    </div>
+    <figure class="viz" aria-label="SIDtune's visualiser: a piano roll of the three SID voices, coloured by waveform">
+      <svg viewBox="0 0 400 230" role="img" aria-hidden="true">
+        <g stroke="#2c2460" stroke-width="1">
+          <line x1="0" y1="76" x2="400" y2="76"/><line x1="0" y1="152" x2="400" y2="152"/>
+        </g>
+        <g font-family="ui-monospace, Menlo, monospace" font-size="10" fill="#a39dd6">
+          <text x="4" y="12">V1</text><text x="4" y="88">V2</text><text x="4" y="164">V3</text>
+        </g>
+        <g fill="#ff7ab6">
+          <rect x="24" y="30" width="34" height="5" rx="2"/><rect x="62" y="22" width="18" height="5" rx="2"/><rect x="84" y="30" width="34" height="5" rx="2"/>
+          <rect x="122" y="14" width="52" height="5" rx="2"/><rect x="178" y="22" width="18" height="5" rx="2"/><rect x="200" y="30" width="34" height="5" rx="2"/>
+          <rect x="238" y="38" width="18" height="5" rx="2"/><rect x="260" y="30" width="52" height="5" rx="2"/><rect x="316" y="18" width="34" height="5" rx="2"/>
+          <rect x="354" y="26" width="42" height="5" rx="2"/>
+        </g>
+        <g fill="#b48cff">
+          <rect x="24" y="52" width="70" height="5" rx="2" opacity=".5"/><rect x="200" y="56" width="90" height="5" rx="2" opacity=".5"/>
+        </g>
+        <g fill="#5fd7ff">
+          <rect x="24" y="118" width="16" height="5" rx="2"/><rect x="44" y="104" width="16" height="5" rx="2"/><rect x="64" y="96" width="16" height="5" rx="2"/>
+          <rect x="84" y="104" width="16" height="5" rx="2"/><rect x="104" y="118" width="16" height="5" rx="2"/><rect x="124" y="110" width="16" height="5" rx="2"/>
+          <rect x="144" y="96" width="16" height="5" rx="2"/><rect x="164" y="90" width="16" height="5" rx="2"/><rect x="184" y="104" width="16" height="5" rx="2"/>
+          <rect x="204" y="118" width="16" height="5" rx="2"/><rect x="224" y="104" width="16" height="5" rx="2"/><rect x="244" y="96" width="16" height="5" rx="2"/>
+          <rect x="264" y="110" width="16" height="5" rx="2"/><rect x="284" y="124" width="16" height="5" rx="2"/><rect x="304" y="110" width="16" height="5" rx="2"/>
+          <rect x="324" y="96" width="16" height="5" rx="2"/><rect x="344" y="104" width="16" height="5" rx="2"/><rect x="364" y="118" width="32" height="5" rx="2"/>
+        </g>
+        <g fill="#ffd75f">
+          <rect x="24" y="200" width="56" height="5" rx="2"/><rect x="84" y="186" width="56" height="5" rx="2"/><rect x="144" y="194" width="56" height="5" rx="2"/>
+          <rect x="204" y="200" width="56" height="5" rx="2"/><rect x="264" y="180" width="56" height="5" rx="2"/><rect x="324" y="194" width="72" height="5" rx="2"/>
+        </g>
+        <g fill="#b8b8c8">
+          <rect x="70" y="216" width="6" height="5" rx="1"/><rect x="130" y="216" width="6" height="5" rx="1"/><rect x="190" y="216" width="6" height="5" rx="1"/>
+          <rect x="250" y="216" width="6" height="5" rx="1"/><rect x="310" y="216" width="6" height="5" rx="1"/><rect x="370" y="216" width="6" height="5" rx="1"/>
+        </g>
+      </svg>
+      <figcaption class="legend">
+        <span><i style="background:#5fd7ff"></i>Triangle</span><span><i style="background:#ffd75f"></i>Sawtooth</span>
+        <span><i style="background:#ff7ab6"></i>Pulse</span><span><i style="background:#b8b8c8"></i>Noise</span><span><i style="background:#b48cff"></i>Mixed</span>
+      </figcaption>
+    </figure>
+  </div>
+</header>
+
+<main class="home">
+  <section>
+    <h2>What it does</h2>
+    <div class="cards">
+      <div class="card" style="--c: var(--tri)"><h3>The whole HVSC</h3><p>Turn on the online catalogue and more than 60,000 tunes from the High Voltage SID Collection appear in your library. Each tune downloads the first time you play it, or download the whole collection for offline listening.</p></div>
+      <div class="card" style="--c: var(--saw)"><h3>Your own files</h3><p>Import an HVSC folder, loose <code>.sid</code> files or a zip, from the Files app or any app's share sheet. Imported tunes are stored on your device.</p></div>
+      <div class="card" style="--c: var(--pulse)"><h3>Accurate emulation</h3><p>libsidplayfp with reSIDfp emulates the 6581 and 8580 SID chips, PAL and NTSC, and tunes that use two or three SID chips.</p></div>
+      <div class="card" style="--c: var(--mix)"><h3>See the music</h3><p>A scrolling piano roll of every voice, coloured by waveform, plus an oscilloscope and the filter settings. Mute voices one by one to hear how a tune is built.</p></div>
+      <div class="card" style="--c: var(--accent-strong)"><h3>Five sound modes</h3><p>From Real (a tiny monitor speaker, the way most people heard it) through Pure, Magic, Epic and Mythic, plus a 3-band equalizer.</p></div>
+      <div class="card" style="--c: #b8b8c8"><h3>Made for iOS</h3><p>Background playback, the lock screen, Control Center, CarPlay and headphone buttons. Keyboard shortcuts on iPad. Six themes and retro C64 and Apple II fonts.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="split">
+      <div class="panel">
+        <h2>Your data stays yours</h2>
+        <p>SIDtune has no accounts, no analytics, no tracking and no ads. Your library, favorites, playlists, history and settings stay on your device. The only network traffic is the optional online catalogue.</p>
+        <p><a href="privacy.html">Read the Privacy Policy →</a></p>
+      </div>
+      <div class="panel">
+        <h2>Need help?</h2>
+        <p>The guide explains everything from getting music into the app to keyboard shortcuts. If something doesn't work, get in touch and I'll help.</p>
+        <p><a href="guide.html">Open the guide →</a> &nbsp; <a href="support.html">Contact support →</a></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <span>© 2026 Marian Fujara</span>
+  <a href="guide.html">Guide</a>
+  <a href="privacy.html">Privacy Policy</a>
+  <a href="support.html">Support</a>
+  <span class="spacer">The tunes belong to their composers. HVSC is a volunteer archive.</span>
+</footer>
+
+</body>
+</html>

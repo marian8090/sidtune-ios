@@ -21,6 +21,7 @@
 		43B5D9CD1AC1FA4A62CE390E /* PlaybackEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9E6B7828033294A1A6643C5 /* PlaybackEngine.swift */; };
 		451BFB201E8FB0138327B8D8 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85A28576F9B5E2A38F82979 /* RootView.swift */; };
 		45FC835E873CAE4369FD0A83 /* MANUAL.md in Resources */ = {isa = PBXBuildFile; fileRef = F36DAEA9D057725FC0773869 /* MANUAL.md */; };
+		4D9ED70117FC67D8132E42BF /* Backup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C72999CB83CC40FF77CE780 /* Backup.swift */; };
 		613BC557DD5757BCFCB93C42 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61FFEDA934764C27C448BCE /* AboutView.swift */; };
 		6F6AC9B7C1D8CF646C6ABA23 /* NowPlayingCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7DBD676BD03603E8B9427E5 /* NowPlayingCenter.swift */; };
 		8BAA8C763C2003B27E9619FE /* HVSCClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B97E378EAECC4B5F5647A88 /* HVSCClient.swift */; };
@@ -52,6 +53,7 @@
 		8A1A790762FA788CCCD99857 /* PlayerBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerBar.swift; sourceTree = "<group>"; };
 		95235D056F3BF0571D783EE7 /* NowPlayingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingView.swift; sourceTree = "<group>"; };
 		98DCDB2AC68D6F3F99BAB19D /* LibraryIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryIndex.swift; sourceTree = "<group>"; };
+		9C72999CB83CC40FF77CE780 /* Backup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backup.swift; sourceTree = "<group>"; };
 		9D0737C84CAAC809519B3C88 /* SIDtuneApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SIDtuneApp.swift; sourceTree = "<group>"; };
 		A61FFEDA934764C27C448BCE /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		A9E6B7828033294A1A6643C5 /* PlaybackEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackEngine.swift; sourceTree = "<group>"; };
@@ -144,6 +146,7 @@
 			isa = PBXGroup;
 			children = (
 				06F6ACBEDE9B561F3D97C3CF /* AppModel.swift */,
+				9C72999CB83CC40FF77CE780 /* Backup.swift */,
 				0EAB4C3A08B7FCB8812B9521 /* Settings.swift */,
 				9D0737C84CAAC809519B3C88 /* SIDtuneApp.swift */,
 			);
@@ -272,6 +275,7 @@
 			files = (
 				613BC557DD5757BCFCB93C42 /* AboutView.swift in Sources */,
 				E4741308045E72F620E5449C /* AppModel.swift in Sources */,
+				4D9ED70117FC67D8132E42BF /* Backup.swift in Sources */,
 				8BAA8C763C2003B27E9619FE /* HVSCClient.swift in Sources */,
 				337386521382E29660ADA8CE /* Importer.swift in Sources */,
 				0D17AD6663E57B961EAFA899 /* LibraryIndex.swift in Sources */,

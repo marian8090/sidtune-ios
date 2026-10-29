@@ -40,7 +40,10 @@ copyrighted, so SIDtune cannot include them. If you own copies, add them under *
 
 - **Library** lists everything. Use the sort button to sort by title, composer or release; otherwise tunes are listed by path.
 - **Search** (the field at the top) matches title, composer, year and path as you type.
-- **Tap a tune** to play it. Next and previous then follow the list you started from, including your current search or sort.
+- **Tap a tune** to play it. Next, previous and shuffle then follow the list you started from. Change the search or the sort and
+  they follow the new results; clear the search and they cover the whole list again. Looking at another list (Favorites, say) leaves
+  what plays next alone until you start a tune there, or until the list you started from runs out: then *Next* carries on with the list
+  on screen.
 - **Play** and **Shuffle** at the top of a list play the whole list.
 - **Shuffle** and **Repeat** sit next to the play button. Repeat cycles through off, all, and one.
 - **Seek** with the slider. Seeking is instant once the background render has caught up (see *Instant seeking* below).
@@ -59,7 +62,8 @@ the subtune its author marked as the default.
 
 ## 3. Now Playing
 
-Tap the tune in the player bar to open Now Playing. On iPad it opens as a column on the right. It shows:
+Tap the tune in the player bar to open Now Playing. On iPad it opens as a column on the right, and on a wide window (an iPad in
+landscape, say) it is open from the start. It shows:
 
 - the title, composer, release and chip details (6581 or 8580, PAL or NTSC, number of SID chips);
 - a **visualiser**: a scrolling piano roll of every voice on every SID chip, coloured by waveform, plus an oscilloscope and the filter
@@ -135,6 +139,9 @@ Hold `Cmd` to see them all.
 ## 8. Your data
 
 - Everything SIDtune stores (imported tunes, playlists, favorites, history, settings) lives on this device. Deleting the app removes it.
+- *Settings → Backup → Save backup* saves your favorites, playlists, history and settings as a small file. *Restore a backup* loads such a
+  file and replaces what's there. It is the same file the SIDtune web app saves, so you can move your favorites and playlists between
+  the web app and iPhone or iPad. Imported tunes are not part of the backup; import them again.
 - *Settings → Library → Clear library* removes imported tunes, song lengths and STIL notes but keeps favorites and playlists.
 - The only network traffic is fetching the online catalogue and the tunes you play from it.
 

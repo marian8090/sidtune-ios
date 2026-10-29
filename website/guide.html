@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SIDtune — User Guide</title>
+<meta name="description" content="How to use SIDtune on iPhone and iPad: getting music, playing tunes, Now Playing, sound settings, sharing, appearance, controls, your data and troubleshooting.">
+<meta name="theme-color" content="#120e27">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="guide">
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="index.html"><img src="icon.svg" alt="" width="36" height="36"><b>SIDTUNE<span>C64 music for iPhone &amp; iPad</span></b></a>
+    <nav class="topnav" aria-label="Site">
+      <a href="index.html">Home</a>
+      <a href="guide.html" aria-current="page">Guide</a>
+      <a href="privacy.html">Privacy<span class="long"> Policy</span></a>
+      <a href="support.html">Support</a>
+    </nav>
+  </div>
+</header>
+
+<div class="layout">
+
+<nav class="toc" aria-label="Contents">
+  <div class="toc-title">USER GUIDE</div>
+  <ol>
+    <li><a href="#music">Getting music</a>
+      <ol>
+        <li><a href="#hvsc">Online HVSC catalogue</a></li>
+        <li><a href="#own-files">Your own files</a></li>
+        <li><a href="#songlengths">Song lengths &amp; STIL</a></li>
+        <li><a href="#roms">C64 ROMs</a></li>
+      </ol>
+    </li>
+    <li><a href="#playing">Finding &amp; playing tunes</a>
+      <ol>
+        <li><a href="#subtunes">Subtunes</a></li>
+        <li><a href="#favorites">Favorites, playlists, history</a></li>
+      </ol>
+    </li>
+    <li><a href="#now-playing">Now Playing</a></li>
+    <li><a href="#sound">Sound</a>
+      <ol>
+        <li><a href="#modes">Audio quality modes</a></li>
+        <li><a href="#emulation">Emulation settings</a></li>
+      </ol>
+    </li>
+    <li><a href="#sharing">Sharing</a></li>
+    <li><a href="#appearance">Appearance</a></li>
+    <li><a href="#controls">Controls outside the app</a></li>
+    <li><a href="#data">Your data</a></li>
+    <li><a href="#troubleshooting">Troubleshooting</a></li>
+    <li><a href="#about">About the music</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<header class="hero" id="top">
+  <div class="eyebrow">USER GUIDE · IPHONE &amp; IPAD</div>
+  <h1>HOW TO USE SIDTUNE</h1>
+  <p class="lead">SIDtune plays Commodore 64 music. It emulates the C64 and its SID sound chip cycle by cycle, so tunes sound the way they did on the real machine. Everything runs on your device: your library, playlists, favorites and settings stay there and nothing is uploaded.</p>
+</header>
+
+<details class="toc-mobile">
+  <summary>CONTENTS</summary>
+  <ol>
+    <li><a href="#music">Getting music</a></li>
+    <li><a href="#playing">Finding &amp; playing tunes</a></li>
+    <li><a href="#now-playing">Now Playing</a></li>
+    <li><a href="#sound">Sound</a></li>
+    <li><a href="#sharing">Sharing</a></li>
+    <li><a href="#appearance">Appearance</a></li>
+    <li><a href="#controls">Controls outside the app</a></li>
+    <li><a href="#data">Your data</a></li>
+    <li><a href="#troubleshooting">Troubleshooting</a></li>
+    <li><a href="#about">About the music</a></li>
+  </ol>
+</details>
+
+<section id="music">
+  <h2><span class="num">01</span>Getting music</h2>
+  <p>There are two ways to fill your library, and you can use both at once.</p>
+
+  <h3 id="hvsc">The online HVSC catalogue</h3>
+  <p>No music is included with the app. Tap <em class="path">Download the HVSC</em> in the empty library (or turn on <em class="path">Settings → Online HVSC</em>) and the whole High Voltage SID Collection (HVSC, more than 60,000 tunes) appears in your library. Only the list is downloaded up front (about 2&nbsp;MB); each tune is fetched the first time you play it and kept for next time. The list refreshes itself when a new HVSC release comes out. Turning the catalogue off removes the list again.</p>
+  <p><strong>Download the whole collection.</strong> <em class="path">Settings → Online HVSC → Download the whole collection</em> stores every tune on your device (about 350&nbsp;MB) so everything plays without a connection. Keep SIDtune open until it finishes. <em class="path">Remove offline copy</em> frees the space again.</p>
+
+  <h3 id="own-files">Your own files</h3>
+  <p>Tap <kbd>+</kbd> (or <em class="path">Add folder, files or zip…</em> in the sidebar) and pick:</p>
+  <ul>
+    <li>an unpacked HVSC folder (pick the <code>C64Music</code> folder),</li>
+    <li>loose <code>.sid</code> files,</li>
+    <li>a <code>.zip</code> containing either.</li>
+  </ul>
+  <p>You can also open a <code>.sid</code> file in SIDtune from the Files app or another app's share sheet. Tunes you import are copied into SIDtune, so they stay available offline. If an imported tune has the same path as one in the online catalogue, your copy wins.</p>
+
+  <h3 id="songlengths">Song lengths and STIL notes</h3>
+  <p>SID tunes usually loop forever, so SIDtune needs to know how long each one is. HVSC's <code>DOCUMENTS/Songlengths.md5</code> provides that, and <code>DOCUMENTS/STIL.txt</code> adds background notes (composer comments, cover versions, trivia) shown in Now Playing. Both are picked up automatically when you import an HVSC folder, and the online catalogue includes them. You can also load them under <em class="path">Settings → Collection data</em>. Tunes without a known length play for the default length set in Settings (3 minutes unless you change it).</p>
+
+  <h3 id="roms">C64 ROMs</h3>
+  <p>A small number of tunes (RSID tunes and some that rely on BASIC) need the C64's own KERNAL, BASIC and CHARGEN ROMs. These are copyrighted, so SIDtune cannot include them. If you own copies, add them under <em class="path">Settings → C64 ROMs</em>.</p>
+</section>
+
+<section id="playing">
+  <h2><span class="num">02</span>Finding and playing tunes</h2>
+  <ul>
+    <li><strong>Library</strong> lists everything. Use the sort button to sort by title, composer or release; otherwise tunes are listed by path.</li>
+    <li><strong>Search</strong> (the field at the top) matches title, composer, year and path as you type.</li>
+    <li><strong>Tap a tune</strong> to play it. Next, previous and shuffle then follow the list you started from. Change the search or the sort and they follow the new results; clear the search and they cover the whole list again. Looking at another list (Favorites, say) leaves what plays next alone until you start a tune there, or until the list you started from runs out: then <em>Next</em> carries on with the list on screen.</li>
+    <li><strong>Play</strong> and <strong>Shuffle</strong> at the top of a list play the whole list.</li>
+    <li><strong>Shuffle</strong> and <strong>Repeat</strong> sit next to the play button. Repeat cycles through off, all, and one.</li>
+    <li><strong>Seek</strong> with the slider. Seeking is instant once the background render has caught up (see <a href="#emulation">Instant seeking</a>).</li>
+  </ul>
+
+  <h3 id="subtunes">Subtunes</h3>
+  <p>Many SID files contain several tunes (a title tune, in-game music, jingles). Now Playing lists them as numbered chips. The tune starts on the subtune its author marked as the default.</p>
+
+  <h3 id="favorites">Favorites, playlists and history</h3>
+  <ul>
+    <li><strong>Swipe right</strong> on a tune, or tap the heart, to make it a favorite. Favorites have their own list in the sidebar.</li>
+    <li><strong>Long-press</strong> a tune for <em>Add to Playlist</em>, <em>Share</em> and more. Create playlists with <em>New Playlist</em> in the sidebar; long-press a playlist to rename or delete it. In a playlist, <em>Edit</em> lets you reorder tunes and swiping left removes one.</li>
+    <li><strong>History</strong> keeps the last 500 tunes you played.</li>
+  </ul>
+</section>
+
+<section id="now-playing">
+  <h2><span class="num">03</span>Now Playing</h2>
+  <p>Tap the tune in the player bar to open Now Playing. On iPad it opens as a column on the right, and on a wide window (an iPad in landscape, say) it is open from the start. It shows:</p>
+  <ul>
+    <li>the title, composer, release and chip details (6581 or 8580, PAL or NTSC, number of SID chips);</li>
+    <li>a <strong>visualiser</strong>: a scrolling piano roll of every voice on every SID chip, coloured by waveform, plus an oscilloscope and the filter settings;</li>
+    <li><strong>V1, V2, V3</strong> buttons that mute individual voices, handy for picking apart how a tune is built;</li>
+    <li>the subtunes, the STIL notes, and buttons to favorite, add to a playlist and share.</li>
+  </ul>
+</section>
+
+<section id="sound">
+  <h2><span class="num">04</span>Sound</h2>
+
+  <h3 id="modes">Audio quality modes</h3>
+  <p>The button with the mode's name (Magic by default) picks how the chip output is presented:</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Mode</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td>Real</td><td>Through a tiny monitor speaker, as most people heard it in the eighties</td></tr>
+      <tr><td>Pure</td><td>The raw chip, nothing added</td></tr>
+      <tr><td>Magic</td><td>Mild stereo widening, light delay and reverb. The recommended default</td></tr>
+      <tr><td>Epic</td><td>The same chain turned up: wide, deep delay and reverb, bold bass</td></tr>
+      <tr><td>Mythic</td><td>Everything cranked to 11</td></tr>
+    </tbody>
+  </table></div>
+  <p>The same panel has a 3-band equalizer (low, mid, high).</p>
+
+  <h3 id="emulation">Emulation settings</h3>
+  <p>Under <em class="path">Settings → Sound</em>:</p>
+  <ul>
+    <li><strong>Emulation engine</strong>: reSIDfp is the accurate reference; SIDLite is much lighter.</li>
+    <li><strong>SID chip</strong>: <em>Auto</em> uses the chip the tune was written for. You can force the original 6581 or the later 8580; they sound noticeably different, especially the filter.</li>
+    <li><strong>Machine clock</strong>: PAL or NTSC. This changes tempo and pitch; <em>Auto</em> follows the tune.</li>
+    <li><strong>Digi boost</strong> makes sample playback audible on the 8580.</li>
+    <li><strong>Instant seeking</strong> renders the whole tune into memory in the background so the seek slider responds immediately. It uses a second CPU thread and about 11&nbsp;MB of memory per minute of music (tunes up to 5 minutes on iPhone, 10 on iPad). Turn it off to save memory and battery; seeks then take a moment.</li>
+  </ul>
+</section>
+
+<section id="sharing">
+  <h2><span class="num">05</span>Sharing</h2>
+  <p><em>Share</em> in Now Playing (or on a long-pressed tune) sends a link that opens the tune (and subtune) in SIDtune on another iPhone or iPad. The tune has to be in that device's library or the online catalogue.</p>
+</section>
+
+<section id="appearance">
+  <h2><span class="num">06</span>Appearance</h2>
+  <p>Choose a theme under <em class="path">Settings → Appearance</em>: <strong>SIDtune Purple</strong> (the default), <strong>C64 Blue</strong>, <strong>Green Phosphor</strong>, <strong>Amber Phosphor</strong>, <strong>Monochrome Dark</strong> and <strong>Monochrome Light</strong>. The same section picks the <strong>font</strong>: the system's own, the Apple II's 40-column lettering (Print Char 21), the C64's (Pet Me 64), or a monospaced font. The two retro fonts are by Kreative Korp.</p>
+  <div class="tip"><b>TIP</b>Try C64 Blue with the C64 font, or Green Phosphor with the Apple II one.</div>
+</section>
+
+<section id="controls">
+  <h2><span class="num">07</span>Controls outside the app</h2>
+  <p>SIDtune keeps playing in the background and with the screen locked. The lock screen, Control Center, headphone buttons and CarPlay can play, pause, skip and seek.</p>
+  <p>With a hardware keyboard on iPad:</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Key</th><th>Action</th></tr></thead>
+    <tbody>
+      <tr><td><kbd>Space</kbd></td><td>Play or pause</td></tr>
+      <tr><td><kbd>←</kbd> / <kbd>→</kbd></td><td>Seek back or forward 10 seconds</td></tr>
+      <tr><td><kbd>Shift+←</kbd> / <kbd>Shift+→</kbd></td><td>Previous or next tune</td></tr>
+      <tr><td><kbd>1</kbd> – <kbd>9</kbd></td><td>Play subtune 1 to 9</td></tr>
+      <tr><td><kbd>+</kbd> / <kbd>-</kbd></td><td>Volume up or down</td></tr>
+      <tr><td><kbd>S</kbd></td><td>Shuffle on or off</td></tr>
+      <tr><td><kbd>R</kbd></td><td>Repeat: off, all, one</td></tr>
+      <tr><td><kbd>F</kbd></td><td>Favorite the playing tune</td></tr>
+      <tr><td><kbd>N</kbd></td><td>Open or close Now Playing</td></tr>
+      <tr><td><kbd>T</kbd> / <kbd>Shift+T</kbd></td><td>Next or previous theme</td></tr>
+      <tr><td><kbd>?</kbd></td><td>The in-app manual</td></tr>
+      <tr><td><kbd>Ctrl+E</kbd></td><td>Audio quality and equalizer</td></tr>
+      <tr><td><kbd>Cmd+,</kbd></td><td>Settings</td></tr>
+    </tbody>
+  </table></div>
+  <p>Hold <kbd>Cmd</kbd> to see them all.</p>
+</section>
+
+<section id="data">
+  <h2><span class="num">08</span>Your data</h2>
+  <ul>
+    <li>Everything SIDtune stores (imported tunes, playlists, favorites, history, settings) lives on your device. Deleting the app removes it.</li>
+    <li><em class="path">Settings → Backup → Save backup</em> saves your favorites, playlists, history and settings as a small file, wherever you choose in the Files app. <em class="path">Restore a backup</em> loads such a file and replaces what's there. It is the same file the SIDtune web app saves, so you can move your favorites and playlists between the web app and iPhone or iPad. Imported tunes are not part of the backup; import them again.</li>
+    <li><em class="path">Settings → Library → Clear library</em> removes imported tunes, song lengths and STIL notes but keeps favorites and playlists.</li>
+    <li>The only network traffic is fetching the online catalogue and the tunes you play from it. See the <a href="privacy.html">Privacy Policy</a>.</li>
+  </ul>
+</section>
+
+<section id="troubleshooting">
+  <h2><span class="num">09</span>Troubleshooting</h2>
+  <ul>
+    <li><strong>No sound</strong>: check the volume. SIDtune plays even with the silent switch on.</li>
+    <li><strong>Stuttering on an older device</strong>: choose SIDLite under <em class="path">Settings → Sound → Emulation engine</em>, and turn off Instant seeking.</li>
+    <li><strong>A tune plays silence or garbage</strong>: it may need the C64 ROMs (see <a href="#roms">C64 ROMs</a>).</li>
+    <li><strong>A tune stops too early or runs on</strong>: its length is missing or wrong in the song-length database; the default length is used instead.</li>
+  </ul>
+  <div class="note"><b>STILL STUCK?</b>Get in touch on the <a href="support.html">Support page</a>.</div>
+</section>
+
+<section id="about">
+  <h2><span class="num">10</span>About the music</h2>
+  <p>The tunes belong to their composers. <a href="https://www.hvsc.c64.org/">HVSC</a> is a volunteer archive. SIDtune is inspired by ultraSID but is an independent project. The emulation is <a href="https://github.com/libsidplayfp/libsidplayfp">libsidplayfp</a> (reSIDfp and SIDLite). The Pet Me 64 font used on this site is by <a href="https://www.kreativekorp.com/software/fonts/">Kreative Korp</a> (<a href="fonts/Kreative-FreeLicense.txt">licence</a>).</p>
+  <a class="top-link" href="#top">↑ Back to top</a>
+</section>
+
+</main>
+</div>
+
+<footer class="site-footer">
+  <span>© 2026 Marian Fujara</span>
+  <a href="index.html">Home</a>
+  <a href="privacy.html">Privacy Policy</a>
+  <a href="support.html">Support</a>
+  <span class="spacer">The tunes belong to their composers. HVSC is a volunteer archive.</span>
+</footer>
+
+</body>
+</html>

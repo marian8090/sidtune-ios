@@ -5,6 +5,7 @@ import SwiftUI
 struct RootView: View {
     @Bindable var model: AppModel
     @Environment(\.horizontalSizeClass) private var hSize
+    @State private var decidedNowPlaying = false
 
     var body: some View {
         let theme = model.settings.theme.theme
@@ -18,6 +19,12 @@ struct RootView: View {
         .inspector(isPresented: hSize == .compact ? .constant(false) : $model.nowPlayingOpen) {
             NowPlayingView(model: model)
                 .inspectorColumnWidth(min: 320, ideal: 380, max: 480)
+        }
+        // Open from the start when the window is wide enough to keep the track list roomy (the web app's 1101px breakpoint).
+        .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width in
+            guard !decidedNowPlaying else { return }
+            decidedNowPlaying = true
+            if hSize == .regular && width >= 1100 { model.nowPlayingOpen = true }
         }
         // Outside the inspector, so the transport spans the whole window even with Now Playing open.
         .safeAreaInset(edge: .bottom, spacing: 0) {
