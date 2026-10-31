@@ -151,6 +151,7 @@ final class AppModel {
         ticker = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
             MainActor.assumeIsolated { self?.tick() }
         }
+        ticker?.tolerance = 0.03
         await connectHVSC()
     }
 

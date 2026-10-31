@@ -10,22 +10,23 @@ struct VizView: View {
 
     var body: some View {
         VStack(spacing: 6) {
-            TimelineView(.animation(paused: !model.playing)) { timeline in
-                Canvas { ctx, size in
-                    history.advance(model: model, at: timeline.date)
-                    drawRoll(ctx, size)
+            // The roll moves 60 columns a second, so frames beyond that (ProMotion's 120 Hz) would only cost energy.
+            TimelineView(.animation(minimumInterval: 1.0 / 60, paused: !model.playing)) { timeline in
+                VStack(spacing: 6) {
+                    Canvas { ctx, size in
+                        history.advance(model: model, at: timeline.date)
+                        drawRoll(ctx, size)
+                    }
+                    .frame(height: compact ? 96 : 150)
+                    .background(theme.vizBg)
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+
+                    Canvas { ctx, size in drawScope(ctx, size) }
+                        .frame(height: compact ? 34 : 56)
+                        .background(theme.vizBg)
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
             }
-            .frame(height: compact ? 96 : 150)
-            .background(theme.vizBg)
-            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-
-            TimelineView(.animation(paused: !model.playing)) { _ in
-                Canvas { ctx, size in drawScope(ctx, size) }
-            }
-            .frame(height: compact ? 34 : 56)
-            .background(theme.vizBg)
-            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
 
             TimelineView(.periodic(from: .now, by: 0.2)) { _ in
                 Text(filterInfo)
@@ -44,9 +45,13 @@ struct VizView: View {
         let columns = history.columns
         let lanes = max(1, history.lanes)
         let laneH = size.height / CGFloat(lanes)
+        var separators = Path()
         for lane in 1..<lanes {
-            ctx.fill(Path(CGRect(x: 0, y: CGFloat(lane) * laneH - 0.5, width: size.width, height: 1)), with: .color(theme.text.opacity(0.07)))
+            separators.addRect(CGRect(x: 0, y: CGFloat(lane) * laneH - 0.5, width: size.width, height: 1))
         }
+        ctx.fill(separators, with: .color(theme.text.opacity(0.07)))
+        // One path per colour (waveform bits x gate) instead of a fill per note: a full roll has well over a thousand notes.
+        var paths = [Path](repeating: Path(), count: 32)
         let visible = min(columns.count, Int(size.width / step) + 1)
         for i in 0..<visible {
             let col = columns[columns.count - 1 - i]
@@ -54,9 +59,11 @@ struct VizView: View {
             for note in col where note.lane < lanes {
                 let top = CGFloat(note.lane) * laneH
                 let y = top + CGFloat(1 - note.pitch) * (laneH - 4)
-                ctx.fill(Path(CGRect(x: x, y: y, width: step, height: 3)),
-                         with: .color(theme.waveColor(note.wave).opacity(note.gate ? 1 : 0.25)))
+                paths[note.wave * 2 + (note.gate ? 1 : 0)].addRect(CGRect(x: x, y: y, width: step, height: 3))
             }
+        }
+        for (k, path) in paths.enumerated() where !path.isEmpty {
+            ctx.fill(path, with: .color(theme.waveColor(k / 2).opacity(k & 1 == 1 ? 1 : 0.25)))
         }
     }
 
@@ -70,11 +77,14 @@ struct VizView: View {
             break
         }
         let n = wave.count / 2
+        // Two samples per point is about one per pixel, as much as a 1.5 pt line can show.
+        let points = max(2, min(n, Int(size.width * 2)))
         var path = Path()
-        for i in 0..<n {
+        for p in 0..<points {
+            let i = p * n / points
             let x = CGFloat(i) / CGFloat(n) * size.width
             let y = size.height / 2 - CGFloat(wave[start + i]) * size.height * 0.9
-            if i == 0 { path.move(to: CGPoint(x: x, y: y)) } else { path.addLine(to: CGPoint(x: x, y: y)) }
+            if p == 0 { path.move(to: CGPoint(x: x, y: y)) } else { path.addLine(to: CGPoint(x: x, y: y)) }
         }
         ctx.stroke(path, with: .color(theme.vizScope), lineWidth: 1.5)
     }

@@ -11,6 +11,7 @@ import Synchronization
 final class PlaybackEngine: @unchecked Sendable {
     static let chunkFrames = 1024
     static let bufferAhead = 0.35
+    static let idleStopDelay = 5.0
 
     let sampleRate: Int
     private let audioEngine = AVAudioEngine()
@@ -36,6 +37,8 @@ final class PlaybackEngine: @unchecked Sendable {
     /// Song position (frames) of the live emulator.
     private var liveFrame = 0
     private var cache: RenderCache?
+    /// The cache from before a mute change, played until `cache` (with the new mix) reaches the playhead.
+    private var staleCache: RenderCache?
     private var cacheSeconds: Double?
     private var coversWholeTune = true
     /// Song position (frames) of the next chunk read from the cache.
@@ -108,7 +111,8 @@ final class PlaybackEngine: @unchecked Sendable {
         try audioEngine.start()
 
         NotificationCenter.default.addObserver(forName: .AVAudioEngineConfigurationChange, object: audioEngine, queue: .main) { [weak self] _ in
-            self?.restartAudio()
+            guard let self, !self.paused.load(ordering: .relaxed) else { return }
+            self.restartAudio()
         }
 
         let thread = Thread { [unowned self] in self.renderLoop() }
@@ -154,8 +158,7 @@ final class PlaybackEngine: @unchecked Sendable {
                 do {
                     loaded = false
                     renderError = nil
-                    cache?.cancel()
-                    cache = nil
+                    dropCaches()
                     flush(base: 0)
                     config = request.config
                     roms = request.roms
@@ -205,14 +208,23 @@ final class PlaybackEngine: @unchecked Sendable {
                 mutes[voice] = muted
                 guard loaded else { return }
                 applyMutes()
-                // The cache was rendered with the old mix: carry on live from the same spot, and render it again.
-                if source == .cache {
-                    fastForwardLive(to: cachePos)
-                    source = .live
+                // The cache was rendered with the old mix, so render it again. Playing from the cache, the live emulator is
+                // parked somewhere behind and catching it up would stall playback: keep playing the old mix until the new
+                // cache gets there.
+                if source == .cache, let old = cache {
+                    if let stale = staleCache, stale.rendered >= old.rendered {
+                        old.cancel()
+                    } else {
+                        staleCache?.cancel()
+                        staleCache = old
+                        old.setHeld(true)
+                    }
+                } else {
+                    cache?.cancel()
                 }
-                cache?.cancel()
                 cache = nil
                 startCache()
+                cache?.setPlayhead(chunk: (source == .cache ? cachePos : liveFrame) / Self.chunkFrames)
             }
             busyFlag.store(false, ordering: .relaxed)
         }
@@ -222,8 +234,7 @@ final class PlaybackEngine: @unchecked Sendable {
         controlQueue.async { [self] in
             lock.withLock {
                 loaded = false
-                cache?.cancel()
-                cache = nil
+                dropCaches()
                 flush(base: 0)
             }
         }
@@ -232,6 +243,15 @@ final class PlaybackEngine: @unchecked Sendable {
     func setPaused(_ value: Bool) {
         if !value { restartAudio() }
         paused.store(value, ordering: .releasing)
+        controlQueue.async { [self] in
+            lock.withLock { cache?.setHeld(value) }
+        }
+        guard value else { return }
+        // A running output keeps the audio hardware, and the app, awake. Stop it once the pause looks like it will last.
+        DispatchQueue.main.asyncAfter(deadline: .now() + Self.idleStopDelay) { [weak self] in
+            guard let self, self.paused.load(ordering: .relaxed) else { return }
+            self.audioEngine.pause()
+        }
     }
 
     func setVolume(_ v: Double) {
@@ -279,9 +299,17 @@ final class PlaybackEngine: @unchecked Sendable {
         }
     }
 
+    private func dropCaches() {
+        cache?.cancel()
+        cache = nil
+        staleCache?.cancel()
+        staleCache = nil
+    }
+
     private func startCache() {
         guard let seconds = cacheSeconds else { return }
         let c = RenderCache(seconds: seconds, coversWholeTune: coversWholeTune, sampleRate: sampleRate, chunkFrames: Self.chunkFrames)
+        c.setHeld(paused.load(ordering: .relaxed))
         c.start(data: tuneData, song: song, config: config, roms: roms, mutes: mutes, sampleRate: sampleRate)
         cache = c
     }
@@ -290,6 +318,7 @@ final class PlaybackEngine: @unchecked Sendable {
         let target = max(0, Int(seconds * Double(sampleRate)))
         if let c = cache, target < c.capacityFrames - Self.chunkFrames {
             cachePos = target / Self.chunkFrames * Self.chunkFrames
+            c.setPlayhead(chunk: cachePos / Self.chunkFrames)
             source = .cache
             flush(base: cachePos)
         } else {
@@ -341,7 +370,9 @@ final class PlaybackEngine: @unchecked Sendable {
             let queued = write - (pending >= 0 ? pending : readFrame.load(ordering: .acquiring))
             // Keeps filling while paused too, so pressing play starts without an underrun.
             if queued + Self.chunkFrames > target {
-                Thread.sleep(forTimeInterval: 0.005)
+                // Sleep until about a chunk has drained; nothing drains while paused.
+                let drain = Double(queued + Self.chunkFrames - target) / Double(sampleRate)
+                Thread.sleep(forTimeInterval: paused.load(ordering: .relaxed) ? 0.05 : min(0.05, max(0.005, drain)))
                 continue
             }
             if renderChunk(scratch) == .wait { Thread.sleep(forTimeInterval: 0.005) }
@@ -351,10 +382,17 @@ final class PlaybackEngine: @unchecked Sendable {
     private func renderChunk(_ scratch: UnsafeMutableBufferPointer<Int16>) -> Step {
         lock.withLock {
             guard loaded, renderError == nil else { return .wait }
+            if source == .live, let c = cache, c.coversWholeTune, liveFrame % Self.chunkFrames == 0,
+               liveFrame / Self.chunkFrames < c.rendered {
+                // The cache has caught up with playback: play from it and let the live emulator rest.
+                cachePos = liveFrame
+                source = .cache
+            }
             let songFrame: Int
             var regs: [[UInt8]] = []
             switch source {
             case .live:
+                cache?.setPlayhead(chunk: liveFrame / Self.chunkFrames)
                 do {
                     try player.render(into: scratch)
                 } catch {
@@ -372,8 +410,16 @@ final class PlaybackEngine: @unchecked Sendable {
                     return .wait
                 }
                 let index = cachePos / Self.chunkFrames
+                c.setPlayhead(chunk: index)
                 if index < c.rendered {
                     regs = c.read(chunk: index, into: scratch.baseAddress!)
+                    if let stale = staleCache {
+                        stale.cancel()
+                        staleCache = nil
+                    }
+                } else if let stale = staleCache, index < stale.rendered {
+                    stale.setPlayhead(chunk: index)
+                    regs = stale.read(chunk: index, into: scratch.baseAddress!)
                 } else if c.finished && !c.coversWholeTune {
                     // Past the end of the memory budget: carry on with the live emulator.
                     busyFlag.store(true, ordering: .relaxed)
