@@ -112,6 +112,10 @@ struct SettingsView: View {
             }
             Toggle("Digi boost", isOn: $model.settings.digiBoost)
             Toggle("Instant seeking", isOn: $model.settings.seekCache)
+            Toggle("Pre-render long tunes", isOn: $model.settings.prerenderLong)
+                .disabled(!model.settings.seekCache)
+            Toggle("Show pre-render progress", isOn: $model.settings.showPrerender)
+                .disabled(!model.settings.seekCache)
             Stepper(value: $model.settings.defaultLengthSec, in: 10...3600, step: 10) {
                 LabeledContent("Default length", value: formatTime(model.settings.defaultLengthSec))
             }
@@ -125,7 +129,9 @@ struct SettingsView: View {
             Text("""
             reSIDfp is the accurate reference; SIDLite is much lighter. Auto uses the chip and clock the tune asks for; PAL or NTSC \
             changes tempo and pitch. Digi boost makes samples audible on the 8580. Instant seeking renders each tune into memory in the \
-            background (about 11 MB per minute) so seeking is immediate. The default length is used when a tune isn't in the song-length database.
+            background (about 11 MB per minute) so seeking is immediate. Pre-render long tunes renders tunes over \
+            \(Int(Settings.seekCacheMaxSeconds / 60)) minutes in full too (a 30-minute tune needs about 330 MB); turn it off to render only their \
+            beginning. A thin line under the seek bar shows how much is ready. The default length is used when a tune isn't in the song-length database.
             """)
         }
         .listRowBackground(theme.panel)

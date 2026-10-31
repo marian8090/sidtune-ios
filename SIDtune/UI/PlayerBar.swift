@@ -194,12 +194,37 @@ struct SeekBar: View {
             }
             .disabled(model.current == nil)
             .accessibilityLabel("Position")
+            .background {
+                if model.settings.showPrerender, model.current != nil, let p = model.prerender {
+                    PrerenderLine(fraction: p.done && p.wholeTune ? 1 : min(1, p.seconds / max(1, model.duration)), done: p.done)
+                }
+            }
             Text(model.lengthKnown || model.current == nil ? formatTime(model.duration) : "~" + formatTime(model.duration))
                 .frame(width: 44, alignment: .leading)
         }
         .appFont(.caption)
         .monospacedDigit()
         .foregroundStyle(theme.muted)
+    }
+}
+
+/// How much of the tune is ready for instant seeking: a hairline just under the slider's track, faded once the render is done.
+private struct PrerenderLine: View {
+    let fraction: Double
+    let done: Bool
+    @Environment(\.theme) private var theme
+
+    var body: some View {
+        GeometryReader { geo in
+            Rectangle()
+                .fill(theme.muted)
+                .opacity(done ? 0.35 : 0.7)
+                .frame(width: geo.size.width * fraction, height: 1)
+                .position(x: geo.size.width * fraction / 2, y: geo.size.height / 2 + 6)
+                .animation(.linear(duration: 0.3), value: fraction)
+        }
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
 }
 

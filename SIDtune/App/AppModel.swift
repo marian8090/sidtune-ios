@@ -99,6 +99,8 @@ final class AppModel {
     private(set) var duration = 180.0
     private(set) var lengthKnown = false
     private(set) var voiceMuted = [false, false, false]
+    /// Progress of the background render for instant seeking; nil when the current tune isn't being pre-rendered.
+    private(set) var prerender: PlaybackEngine.Prerender?
     var message: String?
     var nowPlayingOpen = false
     var settingsOpen = false
@@ -483,10 +485,11 @@ final class AppModel {
 
     private func loadRequest(_ data: [UInt8], meta: TuneMeta, song: Int, startAt: Double) -> PlaybackEngine.LoadRequest {
         let length = lengthFor(meta, song: song) ?? settings.defaultLengthSec
-        let budget = Settings.seekCacheMaxSeconds
+        let whole = length + 2 <= Settings.seekCacheMaxSeconds || settings.prerenderLong
         return PlaybackEngine.LoadRequest(
             data: data, song: song + 1, startAt: startAt, config: settings.sidConfig, roms: roms.isComplete ? roms : nil,
-            mutes: voiceMuted, cacheSeconds: settings.seekCache ? min(length + 2, budget) : nil, coversWholeTune: length + 2 <= budget
+            mutes: voiceMuted, cacheSeconds: settings.seekCache ? (whole ? length + 2 : Settings.seekCacheMaxSeconds) : nil,
+            coversWholeTune: whole
         )
     }
 
@@ -692,6 +695,7 @@ final class AppModel {
         if settings.eq != before.eq { engine?.setEQ(settings.eq) }
         let engineChanged = settings.engine != before.engine || settings.sidModel != before.sidModel || settings.c64Model != before.c64Model
             || settings.digiBoost != before.digiBoost || settings.seekCache != before.seekCache
+            || settings.prerenderLong != before.prerenderLong
         if engineChanged && current != nil {
             load(startAt: position)
         }
@@ -703,6 +707,8 @@ final class AppModel {
     private func tick() {
         guard let engine else { return }
         busy = engine.isBusy
+        let p = current == nil ? nil : engine.prerender
+        if p != prerender { prerender = p }
         guard playing, !loading, !seeking, current != nil else { return }
         position = engine.position
         if position >= duration { return next(auto: true) }

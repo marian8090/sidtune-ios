@@ -98,9 +98,15 @@ Under *Settings → Sound*:
 - **Digi boost** makes sample playback audible on the 8580.
 - **Instant seeking** renders the whole tune into memory in the background so the seek slider responds immediately. The first minute
   is ready within moments; the rest follows at a gentler pace. Once it has caught up, playback comes from memory and the emulator
-  rests, so it costs little extra battery. It needs about 11 MB of memory per minute of music (tunes up to 5 minutes on iPhone, 10 on
-  iPad). Turn it off to save memory; seeks then take a moment. With it on, muting a voice can take a moment to be heard, because the
+  rests, so it costs little extra battery. It needs about 11 MB of memory per minute of music. Turn it off to save memory; seeks then
+  take a moment. With it on, muting a voice can take a moment to be heard, because the
   tune is rendered again from the start with the new mix.
+- **Pre-render long tunes** (on by default, needs Instant seeking) renders tunes longer than 5 minutes on iPhone (10 on iPad) in full as
+  well, so they seek instantly too. A 30-minute tune takes about 330 MB of memory; if the device is short of memory, SIDtune renders
+  less and plays the rest live. Turn it off and only the first 5 (or 10) minutes of those tunes are rendered; seeking beyond that takes a
+  moment.
+- **Show pre-render progress** (on by default, needs Instant seeking) draws a thin line under the seek bar showing how much of the tune
+  is ready for instant seeking. It fades once the whole tune is rendered, and starts again from the left after you mute a voice.
 
 ## 5. Sharing
 

@@ -2,6 +2,7 @@ import AVFoundation
 import SIDEngine
 import SIDFX
 import Synchronization
+import os
 
 /// Owns the emulator, the instant-seek cache, the FX chain, a render thread that keeps a ring buffer about `bufferAhead` seconds
 /// full, and the `AVAudioSourceNode` that drains it. Port of engine.worker.ts + sid-worklet.js + controller.ts.
@@ -12,6 +13,7 @@ final class PlaybackEngine: @unchecked Sendable {
     static let chunkFrames = 1024
     static let bufferAhead = 0.35
     static let idleStopDelay = 5.0
+    static let minCacheSeconds = 60.0
 
     let sampleRate: Int
     private let audioEngine = AVAudioEngine()
@@ -36,13 +38,17 @@ final class PlaybackEngine: @unchecked Sendable {
     private var source = Source.live
     /// Song position (frames) of the live emulator.
     private var liveFrame = 0
-    private var cache: RenderCache?
+    private var cache: RenderCache? {
+        didSet { shownCache.withLock { $0 = cache } }
+    }
     /// The cache from before a mute change, played until `cache` (with the new mix) reaches the playhead.
     private var staleCache: RenderCache?
     private var cacheSeconds: Double?
     private var coversWholeTune = true
     /// Song position (frames) of the next chunk read from the cache.
     private var cachePos = 0
+    /// `cache` for the main thread's progress line, behind its own lock so reading it never waits on a load or seek.
+    private let shownCache = Mutex<RenderCache?>(nil)
     private let fx: FXChain
     private let left: UnsafeMutablePointer<Float>
     private let right: UnsafeMutablePointer<Float>
@@ -271,6 +277,20 @@ final class PlaybackEngine: @unchecked Sendable {
     }
 
     var isBusy: Bool { busyFlag.load(ordering: .relaxed) }
+
+    struct Prerender: Equatable {
+        var seconds: Double
+        var done: Bool
+        /// False when the tune is longer than the memory budget, so rendering stops short of its end.
+        var wholeTune: Bool
+    }
+
+    /// How far the background render for instant seeking has got; nil when there is none.
+    var prerender: Prerender? {
+        guard let c = shownCache.withLock({ $0 }) else { return nil }
+        return Prerender(seconds: Double(c.rendered * c.chunkFrames) / Double(sampleRate), done: c.finished, wholeTune: c.coversWholeTune)
+    }
+
     var lastError: String? { lock.try() ? { defer { lock.unlock() }; return renderError }() : nil }
 
     /// Register snapshots (one array of 32 per chip) for what is playing now.
@@ -307,8 +327,17 @@ final class PlaybackEngine: @unchecked Sendable {
     }
 
     private func startCache() {
-        guard let seconds = cacheSeconds else { return }
-        let c = RenderCache(seconds: seconds, coversWholeTune: coversWholeTune, sampleRate: sampleRate, chunkFrames: Self.chunkFrames)
+        guard var seconds = cacheSeconds else { return }
+        var whole = coversWholeTune
+        // iOS ends an app that runs out of memory without warning, so a very long tune gets at most half of what is left and the
+        // rest plays live. 0 means no limit is known (the simulator).
+        let available = os_proc_available_memory()
+        let affordable = Double(available / 2) / Double(sampleRate * 2 * MemoryLayout<Int16>.size)
+        if available > 0, affordable < seconds {
+            seconds = max(Self.minCacheSeconds, affordable)
+            whole = false
+        }
+        let c = RenderCache(seconds: seconds, coversWholeTune: whole, sampleRate: sampleRate, chunkFrames: Self.chunkFrames)
         c.setHeld(paused.load(ordering: .relaxed))
         c.start(data: tuneData, song: song, config: config, roms: roms, mutes: mutes, sampleRate: sampleRate)
         cache = c

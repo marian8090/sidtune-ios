@@ -21,6 +21,10 @@ struct Settings: Codable, Equatable {
     var onlineCatalogue = false
     /// Pre-render tunes in the background so seeking is instant.
     var seekCache = true
+    /// With seekCache, render tunes longer than `seekCacheMaxSeconds` in full too, instead of only their first stretch.
+    var prerenderLong = true
+    /// Draw a thin line under the seek bar showing how far the background render has got.
+    var showPrerender = true
     var defaultLengthSec = 180.0
     var volume = 0.8
     var shuffle = false
@@ -43,6 +47,8 @@ struct Settings: Codable, Equatable {
         eq = (try? c.decodeIfPresent([Double].self, forKey: .eq)) ?? d.eq
         onlineCatalogue = (try? c.decodeIfPresent(Bool.self, forKey: .onlineCatalogue)) ?? d.onlineCatalogue
         seekCache = (try? c.decodeIfPresent(Bool.self, forKey: .seekCache)) ?? d.seekCache
+        prerenderLong = (try? c.decodeIfPresent(Bool.self, forKey: .prerenderLong)) ?? d.prerenderLong
+        showPrerender = (try? c.decodeIfPresent(Bool.self, forKey: .showPrerender)) ?? d.showPrerender
         defaultLengthSec = (try? c.decodeIfPresent(Double.self, forKey: .defaultLengthSec)) ?? d.defaultLengthSec
         volume = (try? c.decodeIfPresent(Double.self, forKey: .volume)) ?? d.volume
         shuffle = (try? c.decodeIfPresent(Bool.self, forKey: .shuffle)) ?? d.shuffle
@@ -69,7 +75,7 @@ struct Settings: Codable, Equatable {
         return c
     }
 
-    /// Longest tune (seconds) kept fully in memory for instant seeking; phones get a smaller budget.
+    /// Longest tune (seconds) rendered in full for instant seeking when prerenderLong is off; phones get a smaller budget.
     static var seekCacheMaxSeconds: Double { UIDevice.current.userInterfaceIdiom == .phone ? 300 : 600 }
 
     private static let key = "settings"
