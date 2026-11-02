@@ -93,11 +93,15 @@ final class PlaybackEngine: @unchecked Sendable {
     private let vizLock = NSLock()
     private var viz: [VizFrame] = []
 
+    /// Wakes the render thread when it is parked: nothing loaded, or paused with the ring full.
+    private let wake = DispatchSemaphore(value: 0)
+
     init() throws {
+        // Only the category here: activating the session (on the first play, in `restartAudio`) is what stops other apps' audio.
         let session = AVAudioSession.sharedInstance()
         try session.setCategory(.playback, mode: .default)
-        try session.setActive(true)
-        sampleRate = Int(session.sampleRate.rounded())
+        let rate = session.sampleRate
+        sampleRate = rate > 0 ? Int(rate.rounded()) : 48000
 
         player = SIDPlayer(sampleRate: sampleRate)
         fx = FXChain(sampleRate: Double(sampleRate), blockSize: Self.chunkFrames)
@@ -114,7 +118,7 @@ final class PlaybackEngine: @unchecked Sendable {
         }
         audioEngine.attach(sourceNode)
         audioEngine.connect(sourceNode, to: audioEngine.mainMixerNode, format: format)
-        try audioEngine.start()
+        audioEngine.prepare()
 
         NotificationCenter.default.addObserver(forName: .AVAudioEngineConfigurationChange, object: audioEngine, queue: .main) { [weak self] _ in
             guard let self, !self.paused.load(ordering: .relaxed) else { return }
@@ -129,13 +133,14 @@ final class PlaybackEngine: @unchecked Sendable {
 
     deinit {
         running.store(false, ordering: .relaxed)
+        wake.signal()
         audioEngine.stop()
         ring.deallocate()
         left.deallocate()
         right.deallocate()
     }
 
-    /// Restarts output after a route or configuration change (or an interruption) stopped the engine.
+    /// Starts output on the first play, and restarts it after a pause, a route or configuration change, or an interruption stopped it.
     func restartAudio() {
         guard !audioEngine.isRunning else { return }
         try? AVAudioSession.sharedInstance().setActive(true)
@@ -249,6 +254,7 @@ final class PlaybackEngine: @unchecked Sendable {
     func setPaused(_ value: Bool) {
         if !value { restartAudio() }
         paused.store(value, ordering: .releasing)
+        if !value { wake.signal() }
         controlQueue.async { [self] in
             lock.withLock { cache?.setHeld(value) }
         }
@@ -383,11 +389,18 @@ final class PlaybackEngine: @unchecked Sendable {
         pendingBase.store(base, ordering: .relaxed)
         flushTo.store(writeFrame.load(ordering: .acquiring), ordering: .releasing)
         vizLock.withLock { viz.removeAll() }
+        wake.signal()
     }
 
     // MARK: Render thread
 
-    private enum Step { case rendered, wait }
+    private enum Step {
+        case rendered
+        /// Waiting for something that comes soon (the cache reaching the playhead): try again shortly.
+        case wait
+        /// Nothing to play until a load: park until woken.
+        case idle
+    }
 
     private func renderLoop() {
         let scratch = UnsafeMutableBufferPointer<Int16>.allocate(capacity: Self.chunkFrames * 2)
@@ -399,18 +412,27 @@ final class PlaybackEngine: @unchecked Sendable {
             let queued = write - (pending >= 0 ? pending : readFrame.load(ordering: .acquiring))
             // Keeps filling while paused too, so pressing play starts without an underrun.
             if queued + Self.chunkFrames > target {
-                // Sleep until about a chunk has drained; nothing drains while paused.
-                let drain = Double(queued + Self.chunkFrames - target) / Double(sampleRate)
-                Thread.sleep(forTimeInterval: paused.load(ordering: .relaxed) ? 0.05 : min(0.05, max(0.005, drain)))
+                if paused.load(ordering: .relaxed) {
+                    // Nothing drains while paused: park until play or a flush.
+                    _ = wake.wait(timeout: .now() + 1)
+                } else {
+                    // Sleep until about a chunk has drained.
+                    let drain = Double(queued + Self.chunkFrames - target) / Double(sampleRate)
+                    Thread.sleep(forTimeInterval: min(0.05, max(0.005, drain)))
+                }
                 continue
             }
-            if renderChunk(scratch) == .wait { Thread.sleep(forTimeInterval: 0.005) }
+            switch renderChunk(scratch) {
+            case .rendered: break
+            case .wait: Thread.sleep(forTimeInterval: 0.005)
+            case .idle: _ = wake.wait(timeout: .now() + 1)
+            }
         }
     }
 
     private func renderChunk(_ scratch: UnsafeMutableBufferPointer<Int16>) -> Step {
         lock.withLock {
-            guard loaded, renderError == nil else { return .wait }
+            guard loaded, renderError == nil else { return .idle }
             if source == .live, let c = cache, c.coversWholeTune, liveFrame % Self.chunkFrames == 0,
                liveFrame / Self.chunkFrames < c.rendered {
                 // The cache has caught up with playback: play from it and let the live emulator rest.
@@ -426,7 +448,7 @@ final class PlaybackEngine: @unchecked Sendable {
                     try player.render(into: scratch)
                 } catch {
                     renderError = "\(error)"
-                    return .wait
+                    return .idle
                 }
                 songFrame = liveFrame
                 liveFrame += Self.chunkFrames

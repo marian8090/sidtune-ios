@@ -117,6 +117,7 @@ final class AppModel {
     @ObservationIgnored private var played: [String] = []
     @ObservationIgnored private var playToken = 0
     @ObservationIgnored private var ticker: Timer?
+    @ObservationIgnored private var pausedByInterruption = false
     @ObservationIgnored private let nowPlaying = NowPlayingCenter()
     @ObservationIgnored private var lastNowPlayingUpdate = Date.distantPast
 
@@ -580,6 +581,7 @@ final class AppModel {
             if let first = visible.first { playFromList(first.path) }
             return
         }
+        pausedByInterruption = false
         playing.toggle()
         engine?.setPaused(!playing)
         nowPlaying.update(force: true)
@@ -831,8 +833,11 @@ final class AppModel {
                 guard let self else { return }
                 if type == .began, self.playing {
                     self.togglePlay()
-                } else if type == .ended, resume, !self.playing, self.current != nil {
-                    self.togglePlay()
+                    self.pausedByInterruption = true
+                } else if type == .ended {
+                    // Only resume what the interruption paused, not a tune the user had paused before the call.
+                    if resume, self.pausedByInterruption, !self.playing, self.current != nil { self.togglePlay() }
+                    self.pausedByInterruption = false
                 }
             }
         }
