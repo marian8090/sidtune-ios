@@ -13,7 +13,7 @@ public enum ImportPaths {
     }
 
     public enum Kind: Sendable {
-        case sid, songlengths, stil, zip, other
+        case sid, songlengths, stil, zip, sevenZip, other
     }
 
     public static func kind(of name: String) -> Kind {
@@ -22,6 +22,7 @@ public enum ImportPaths {
         if n == "songlengths.md5" { return .songlengths }
         if n == "stil.txt" { return .stil }
         if n.hasSuffix(".zip") { return .zip }
+        if n.hasSuffix(".7z") { return .sevenZip }
         return .other
     }
 }

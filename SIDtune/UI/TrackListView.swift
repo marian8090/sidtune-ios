@@ -146,7 +146,7 @@ struct TrackListView: View {
                         } description: {
                             Text("""
                             Download the High Voltage SID Collection: the list of all 60,000+ tunes (about 2 MB), with each tune \
-                            fetched the first time you play it. Or add your own .sid files, a .zip or an unpacked HVSC folder.
+                            fetched the first time you play it. Or add your own .sid files, a .zip or .7z, or an unpacked HVSC folder.
                             """)
                         } actions: {
                             Button("Download the HVSC") { model.settings.onlineCatalogue = true }.buttonStyle(.borderedProminent)
@@ -156,7 +156,7 @@ struct TrackListView: View {
                         ContentUnavailableView {
                             Label("Your library is empty", systemImage: "music.note.list")
                         } description: {
-                            Text(model.hvscStatus.state == .error ? model.hvscStatus.text : "Add an unpacked HVSC folder (C64Music), .sid files or a .zip.")
+                            Text(model.hvscStatus.state == .error ? model.hvscStatus.text : "Add HVSC's .7z download, an unpacked HVSC folder (C64Music), .sid files or a .zip.")
                         } actions: {
                             if model.hvscStatus.state == .error {
                                 Button("Try again") { Task { await model.connectHVSC() } }.buttonStyle(.borderedProminent)

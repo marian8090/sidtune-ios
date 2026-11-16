@@ -15,13 +15,15 @@ when a new HVSC release comes out. Turning it off removes the list again.
 **Download the whole collection.** *Settings → Online HVSC → Download the whole collection* stores every tune on this device (about
 350 MB) so everything plays without a connection. Keep SIDtune open until it finishes. *Remove offline copy* frees the space again.
 
-**Your own files.** Tap **+** (or *Add folder, files or zip…* in the sidebar) and pick:
+**Your own files.** Tap **+** (or *Add folder, files or archive…* in the sidebar) and pick:
 
+- HVSC's own download, `HVSC_xx-all-of-them.7z`, as it is: no need to unpack it,
 - an unpacked HVSC folder (pick the `C64Music` folder),
 - loose `.sid` files,
-- a `.zip` containing either.
+- a `.zip` or `.7z` containing any of these.
 
-You can also open a `.sid` file in SIDtune from the Files app or another app's share sheet. Tunes you import are copied into SIDtune, so
+Importing the whole HVSC takes about a minute and needs about 400 MB of free space; keep SIDtune open until it finishes. Afterwards you
+can delete the downloaded `.7z`. You can also open a `.sid` or `.7z` file in SIDtune from the Files app or another app's share sheet. Tunes you import are copied into SIDtune, so
 they stay available offline. If an imported tune has the same path as one in the online catalogue, your copy wins.
 
 ### Song lengths and STIL notes

@@ -61,11 +61,22 @@ targets:
             UTTypeConformsTo: [public.data]
             UTTypeTagSpecification:
               public.filename-extension: [sid]
+          # So "Open in SIDtune" is offered for HVSC's own download (HVSC_xx-all-of-them.7z).
+          - UTTypeIdentifier: org.7-zip.7-zip-archive
+            UTTypeDescription: 7-Zip archive
+            UTTypeConformsTo: [public.data, public.archive]
+            UTTypeTagSpecification:
+              public.filename-extension: [7z]
+              public.mime-type: [application/x-7z-compressed]
         CFBundleDocumentTypes:
           - CFBundleTypeName: SID tune
             CFBundleTypeRole: Viewer
             LSHandlerRank: Owner
             LSItemContentTypes: [com.marianfujara.sidtune.sid]
+          - CFBundleTypeName: 7-Zip archive
+            CFBundleTypeRole: Viewer
+            LSHandlerRank: Alternate
+            LSItemContentTypes: [org.7-zip.7-zip-archive]
 schemes:
   SIDtune:
     build:

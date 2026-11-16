@@ -32,7 +32,12 @@ simulator.
     `.inspector` on iPad and a sheet on iPhone, and `PlayerBar` along the bottom. Themes and fonts live in `Theme.swift`.
   - `Resources/Docs/MANUAL.md`: the in-app Help (iOS edition of the web manual). Keep it in step with user-visible changes.
 - `Packages/SIDEngine/`: local Swift package with three libraries: `SIDEngine` (emulator), `SIDLibrary` (PSID, Songlengths,
-  STIL, catalogue index, zip reader, search; pure Foundation) and `SIDFX` (the audio quality modes and EQ, port of `fx.ts`).
+  STIL, catalogue index, zip and 7z readers, search) and `SIDFX` (the audio quality modes and EQ, port of `fx.ts`).
+  - `Sources/CLZMA/lzma`: LZMA SDK 25.01 (public domain), vendored unmodified; upgrade by copying the same files from a newer SDK's `C/`.
+    `Sources/CLZMA/sevenzip.c` is ours: it uses the SDK only to parse the 7z header and decodes blocks itself as pull stages, because
+    the SDK's extractor holds a whole solid block in memory and rejects HVSC's two-coder BCJ2 layout. HVSC's `.7z` needs PPMd
+    (256 MiB model) and LZMA (340 MiB dictionary); allocations of 16 MiB or more are mmapped from an unlinked temp file to stay out of the
+    memory footprint. `SevenZipTests.decodesTheHVSCRelease` checks a real release when `HVSC_7Z` points at one.
   - `Sources/CSIDPlayFP/libsidplayfp` (3.1.2) and `libresidfp` (1.2.3): vendored upstream sources. Don't modify them. The only
     hand-written files there are the ones `configure` would generate: `libsidplayfp/config.h`, `libsidplayfp/sidplayfp/sidversion.h`,
     `libsidplayfp/builders/sidlite-builder/sidlite/sl_defs.h`, `libresidfp/siddefs-fp.h`, `libresidfp/residfp/sidversion.h`. To upgrade,

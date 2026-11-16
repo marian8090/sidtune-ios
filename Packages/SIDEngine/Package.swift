@@ -31,12 +31,22 @@ let package = Package(
             ]
         ),
         .target(name: "SIDEngine", dependencies: ["CSIDPlayFP"]),
-        // Library data: PSID headers, Songlengths, STIL, the online catalogue index, zip archives, search.
-        .target(name: "SIDLibrary"),
+        // LZMA SDK 25.01 (public domain), vendored unmodified, plus sevenzip.c: a streaming 7z reader for HVSC's own archive.
+        .target(
+            name: "CLZMA",
+            exclude: ["lzma/lzma-sdk.txt"],
+            cSettings: [
+                .headerSearchPath("lzma"),
+                // Debug builds decode HVSC's 355 MB block too, so optimise them as well.
+                .unsafeFlags(["-O3", "-Wno-everything"]),
+            ]
+        ),
+        // Library data: PSID headers, Songlengths, STIL, the online catalogue index, zip and 7z archives, search.
+        .target(name: "SIDLibrary", dependencies: ["CLZMA"]),
         // The audio quality modes and equalizer (port of the web app's fx.ts).
         .target(name: "SIDFX", swiftSettings: [.unsafeFlags(["-Ounchecked"])]),
         .testTarget(name: "SIDEngineTests", dependencies: ["SIDEngine"], resources: [.copy("Fixtures")]),
-        .testTarget(name: "SIDLibraryTests", dependencies: ["SIDLibrary"]),
+        .testTarget(name: "SIDLibraryTests", dependencies: ["SIDLibrary"], resources: [.copy("Fixtures")]),
         .testTarget(name: "SIDFXTests", dependencies: ["SIDFX"]),
     ],
     cxxLanguageStandard: .gnucxx20

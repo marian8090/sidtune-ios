@@ -101,6 +101,7 @@ private func psidHeader(title: String, author: String, released: String, songs: 
     #expect(ImportPaths.kind(of: "C64Music/DOCUMENTS/Songlengths.md5") == .songlengths)
     #expect(ImportPaths.kind(of: "a/STIL.txt") == .stil)
     #expect(ImportPaths.kind(of: "a/B.SID") == .sid)
+    #expect(ImportPaths.kind(of: "HVSC_85-all-of-them.7z") == .sevenZip)
 }
 
 @Test func searchMatchesAllTokens() {

@@ -43,7 +43,7 @@ struct SidebarView: View {
                 Text("Playlists").appFont(.caption)
             }
             Section {
-                Button { importing = true } label: { Label("Add folder, files or zip…", systemImage: "folder.badge.plus") }
+                Button { importing = true } label: { Label("Add folder, files or archive…", systemImage: "folder.badge.plus") }
                     .disabled(model.importProgress != nil)
                 if let p = model.importProgress {
                     VStack(alignment: .leading, spacing: 4) {

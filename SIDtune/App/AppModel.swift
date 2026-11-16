@@ -245,7 +245,10 @@ final class AppModel {
     func importItems(_ urls: [URL]) {
         guard !urls.isEmpty, importProgress == nil else { return }
         importProgress = (0, 0)
+        // Importing all of HVSC takes about a minute; ask for time to finish if the user switches apps meanwhile.
+        let background = UIApplication.shared.beginBackgroundTask(withName: "Import")
         Task {
+            defer { UIApplication.shared.endBackgroundTask(background) }
             do {
                 let result = try await Task.detached(priority: .userInitiated) {
                     try Importer.run(urls) { done, total in
@@ -261,11 +264,12 @@ final class AppModel {
                 if let text = result.stil { saveSTIL(text) }
                 rebuildTunes()
                 let extras = [result.songlengths != nil ? "song lengths" : nil, result.stil != nil ? "STIL notes" : nil].compactMap { $0 }.joined(separator: " and ")
+                let failed = result.failures.isEmpty ? "" : " Could not read all of \(result.failures.joined(separator: "; "))."
                 if result.tunes.isEmpty && extras.isEmpty {
-                    message = "No SID files found in that selection."
+                    message = (failed.isEmpty ? "No SID files found in that selection." : "Nothing imported.") + failed
                 } else {
                     let n = result.tunes.count
-                    message = "Added \(n.formatted()) tune\(n == 1 ? "" : "s")\(extras.isEmpty ? "" : " plus \(extras)")."
+                    message = "Added \(n.formatted()) tune\(n == 1 ? "" : "s")\(extras.isEmpty ? "" : " plus \(extras)")." + failed
                 }
             } catch {
                 message = "Import failed: \(error.localizedDescription)"
