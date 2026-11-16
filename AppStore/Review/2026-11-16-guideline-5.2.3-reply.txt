@@ -1,0 +1,19 @@
+Hello,
+
+Thank you for the review and for explaining the issue under Guideline 5.2.3.
+
+We have removed the feature that downloaded the High Voltage SID Collection. In version 0.3.0 (build 3):
+
+- The app no longer downloads, streams or offers any music. The online catalogue, the per-tune downloads and the "download the whole collection" option have been removed entirely, together with the server address they used.
+- SIDtune now makes no network connections at all. It only plays files that the user already has and imports through the system file picker (Files app) or opens from another app's share sheet: individual .sid files, folders, or .zip and .7z archives.
+- No music is included in the app, and the app does not link to or suggest any source for downloading music.
+- On first launch, the update deletes any catalogue data and cached tunes left on the device by earlier versions.
+
+The App Store description, screenshots and support website have been updated to match.
+
+To review: on first launch the library is empty and offers "Add music…", which opens the standard document picker for files the user already owns.
+
+Please let us know if anything else needs to change.
+
+Best regards,
+Marian Fujara

@@ -122,6 +122,14 @@ fits an iPhone screen without scrolling.
 Not checked yet: importing through the Files picker, the full offline download (about 350 MB), lock-screen controls on a device,
 and the real-device speed.
 
+### App Review: online catalogue removed (2026-11-16)
+
+App Review rejected 0.2.1 under guideline 5.2.3 (downloading media without the rights holders' authorisation) because the app could
+download the HVSC. HVSC's own notice says every tune is copyrighted and its crew can't grant licences, so the online catalogue,
+streaming and offline packs were removed from the iOS app (they stay in the web app). Instead the importer reads HVSC's own `.7z`
+release directly (LZMA SDK in `Packages/SIDEngine/Sources/CLZMA`), so users who download HVSC themselves can import it in one step.
+On launch the app deletes catalogue data and cached tunes left by 0.2.x.
+
 ## 6. Testing
 
 Unlike the web app, the iOS app gets tests from the start where it's cheap: unit tests for the PSID parser, Songlengths/STIL parsing,

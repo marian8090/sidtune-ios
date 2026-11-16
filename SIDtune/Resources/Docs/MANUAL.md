@@ -5,17 +5,9 @@ machine. Everything runs on your device: your library, playlists, favorites and 
 
 ## 1. Getting music
 
-There are two ways to fill your library, and you can use both at once.
+SIDtune comes without any music: you add tunes you already have.
 
-**The online HVSC catalogue.** Nothing is included with the app. Tap *Download the HVSC* in the empty library (or turn on
-*Settings → Online HVSC*) and the whole High Voltage SID Collection (HVSC, more than 60,000 tunes) appears in your library. Only the
-list is downloaded up front (about 2 MB); each tune is fetched the first time you play it and kept for next time. It refreshes itself
-when a new HVSC release comes out. Turning it off removes the list again.
-
-**Download the whole collection.** *Settings → Online HVSC → Download the whole collection* stores every tune on this device (about
-350 MB) so everything plays without a connection. Keep SIDtune open until it finishes. *Remove offline copy* frees the space again.
-
-**Your own files.** Tap **+** (or *Add folder, files or archive…* in the sidebar) and pick:
+Tap **+** (or *Add music…* in the sidebar) and pick:
 
 - HVSC's own download, `HVSC_xx-all-of-them.7z`, as it is: no need to unpack it,
 - an unpacked HVSC folder (pick the `C64Music` folder),
@@ -23,14 +15,14 @@ when a new HVSC release comes out. Turning it off removes the list again.
 - a `.zip` or `.7z` containing any of these.
 
 Importing the whole HVSC takes about a minute and needs about 400 MB of free space; keep SIDtune open until it finishes. Afterwards you
-can delete the downloaded `.7z`. You can also open a `.sid` or `.7z` file in SIDtune from the Files app or another app's share sheet. Tunes you import are copied into SIDtune, so
-they stay available offline. If an imported tune has the same path as one in the online catalogue, your copy wins.
+can delete the `.7z`. You can also open a `.sid` or `.7z` file in SIDtune from the Files app or another app's share sheet. Tunes you
+import are copied into SIDtune, so they play without a connection.
 
 ### Song lengths and STIL notes
 
 SID tunes usually loop forever, so SIDtune needs to know how long each one is. HVSC's `DOCUMENTS/Songlengths.md5` provides that, and
 `DOCUMENTS/STIL.txt` adds background notes (composer comments, cover versions, trivia) shown in Now Playing. Both are picked up
-automatically when you import an HVSC folder, and the online catalogue includes them. You can also load them under *Settings →
+automatically when you import HVSC's `.7z` or an HVSC folder. You can also load them under *Settings →
 Collection data*. Tunes without a known length play for the default length set in Settings (3 minutes unless you change it).
 
 ### C64 ROMs
@@ -153,7 +145,7 @@ Hold `Cmd` to see them all.
   file and replaces what's there. It is the same file the SIDtune web app saves, so you can move your favorites and playlists between
   the web app and iPhone or iPad. Imported tunes are not part of the backup; import them again.
 - *Settings → Library → Clear library* removes imported tunes, song lengths and STIL notes but keeps favorites and playlists.
-- The only network traffic is fetching the online catalogue and the tunes you play from it.
+- SIDtune doesn't use the network.
 
 ## 9. Troubleshooting
 
@@ -164,5 +156,5 @@ Hold `Cmd` to see them all.
 
 ## About the music
 
-The tunes belong to their composers. HVSC is a volunteer archive. SIDtune is free software, inspired by ultraSID but an independent
+The tunes belong to their composers. SIDtune is free software, inspired by ultraSID but an independent
 project. The emulation is libsidplayfp (reSIDfp and SIDLite).

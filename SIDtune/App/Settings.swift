@@ -17,8 +17,6 @@ struct Settings: Codable, Equatable {
     var fxMode = FxMode.magic
     /// Equalizer offsets in dB for the low (200 Hz), mid (1 kHz) and high (4 kHz) bands.
     var eq = [0.0, 0, 0]
-    /// Browse the online HVSC catalogue. Off until the user chooses to download it.
-    var onlineCatalogue = false
     /// Pre-render tunes in the background so seeking is instant.
     var seekCache = true
     /// With seekCache, render tunes longer than `seekCacheMaxSeconds` in full too, instead of only their first stretch.
@@ -45,7 +43,6 @@ struct Settings: Codable, Equatable {
         digiBoost = (try? c.decodeIfPresent(Bool.self, forKey: .digiBoost)) ?? d.digiBoost
         fxMode = (try? c.decodeIfPresent(FxMode.self, forKey: .fxMode)) ?? d.fxMode
         eq = (try? c.decodeIfPresent([Double].self, forKey: .eq)) ?? d.eq
-        onlineCatalogue = (try? c.decodeIfPresent(Bool.self, forKey: .onlineCatalogue)) ?? d.onlineCatalogue
         seekCache = (try? c.decodeIfPresent(Bool.self, forKey: .seekCache)) ?? d.seekCache
         prerenderLong = (try? c.decodeIfPresent(Bool.self, forKey: .prerenderLong)) ?? d.prerenderLong
         showPrerender = (try? c.decodeIfPresent(Bool.self, forKey: .showPrerender)) ?? d.showPrerender
@@ -123,9 +120,6 @@ enum Storage {
     static var songlengths: URL { support.appending(path: "Songlengths.md5") }
     static var stil: URL { support.appending(path: "STIL.txt") }
     static var roms: URL { support.appending(path: "roms.json") }
-    static var hvsc: URL { support.appending(path: "HVSC", directoryHint: .isDirectory) }
-    static var hvscPacks: URL { hvsc.appending(path: "packs", directoryHint: .isDirectory) }
-    static var tuneCache: URL { caches.appending(path: "Tunes", directoryHint: .isDirectory) }
 
     /// `path` is an HVSC-style path starting with "/".
     static func file(in base: URL, path: String) -> URL {

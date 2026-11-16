@@ -2,7 +2,7 @@ import SIDLibrary
 import SwiftUI
 import UniformTypeIdentifiers
 
-/// Port of src/ui/SettingsDialog.tsx, plus the offline copy of the collection.
+/// Port of src/ui/SettingsDialog.tsx.
 struct SettingsView: View {
     @Bindable var model: AppModel
     @Environment(\.theme) private var theme
@@ -10,7 +10,6 @@ struct SettingsView: View {
     @State private var picking: Pick?
     @State private var importerShown = false
     @State private var confirmClear = false
-    @State private var confirmDeleteOffline = false
     @State private var exportingBackup: BackupDocument?
     @State private var restoreURL: URL?
 
@@ -24,7 +23,6 @@ struct SettingsView: View {
             Form {
                 appearance
                 sound
-                if model.hvscAvailable { hvsc }
                 collection
                 roms
                 backup
@@ -72,11 +70,6 @@ struct SettingsView: View {
                 Button("Clear library", role: .destructive) { model.wipeLibrary() }
             } message: {
                 Text("Removes all imported tunes, song lengths and STIL notes from this device. Favorites and playlists are kept.")
-            }
-            .confirmationDialog("Remove the offline copy?", isPresented: $confirmDeleteOffline, titleVisibility: .visible) {
-                Button("Remove", role: .destructive) { model.deleteOfflineCollection() }
-            } message: {
-                Text("Tunes you have played stay cached; the rest stream again when you play them.")
             }
         }
     }
@@ -137,45 +130,6 @@ struct SettingsView: View {
         .listRowBackground(theme.panel)
     }
 
-    private var hvsc: some View {
-        Section {
-            Toggle("Download the HVSC catalogue", isOn: $model.settings.onlineCatalogue)
-            if model.settings.onlineCatalogue {
-                LabeledContent("Status", value: model.hvscStatus.text.isEmpty ? "—" : model.hvscStatus.text)
-                Button("Check for a new release") { Task { await model.connectHVSC(forceRefresh: true) } }
-                    .disabled(model.hvscStatus.state == .loading)
-                let packs = model.offlinePacks
-                if let d = model.packDownload {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(d.text).appFont(.footnote)
-                        ProgressView(value: Double(d.done), total: Double(max(1, d.total)))
-                        Text("\(bytes(d.done)) of \(bytes(d.total)). Keep SIDtune open until it finishes.")
-                            .appFont(.caption)
-                            .foregroundStyle(theme.muted)
-                    }
-                    Button("Cancel download", role: .destructive) { model.cancelCollectionDownload() }
-                } else if packs.total > 0 && packs.have == packs.total {
-                    LabeledContent("Offline copy", value: "Complete · \(bytes(packs.bytes))")
-                    Button("Remove offline copy", role: .destructive) { confirmDeleteOffline = true }
-                } else if model.hvscManifest != nil {
-                    Button(packs.have > 0 ? "Finish downloading the collection (\(bytes(model.offlineTotalBytes - packs.bytes)))"
-                                          : "Download the whole collection (\(bytes(model.offlineTotalBytes)))") {
-                        model.downloadCollection()
-                    }
-                }
-            }
-        } header: {
-            Text("Online HVSC")
-        } footer: {
-            Text("""
-            Nothing is included with the app. Turning this on downloads the list of the whole High Voltage SID Collection (about \
-            2 MB); tunes download the first time you play them and are kept for next time. Download the whole collection to play \
-            everything offline. Turning it off removes the list.
-            """)
-        }
-        .listRowBackground(theme.panel)
-    }
-
     private var collection: some View {
         Section {
             Button { pick(.songlengths) } label: {
@@ -187,7 +141,7 @@ struct SettingsView: View {
         } header: {
             Text("Collection data")
         } footer: {
-            Text("HVSC's DOCUMENTS/Songlengths.md5 and DOCUMENTS/STIL.txt for imported tunes. Both are picked up automatically when you add an HVSC folder; the online catalogue has its own.")
+            Text("HVSC's DOCUMENTS/Songlengths.md5 and DOCUMENTS/STIL.txt for imported tunes. Both are picked up automatically when you import HVSC's .7z or an HVSC folder.")
         }
         .listRowBackground(theme.panel)
     }
@@ -249,10 +203,6 @@ struct SettingsView: View {
     private func pick(_ p: Pick) {
         picking = p
         importerShown = true
-    }
-
-    private func bytes(_ n: Int64) -> String {
-        ByteCountFormatter.string(fromByteCount: n, countStyle: .file)
     }
 }
 

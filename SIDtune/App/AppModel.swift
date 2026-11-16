@@ -26,39 +26,18 @@ final class AppModel {
         }
     }
 
-    struct HVSCStatus: Equatable {
-        enum State { case off, loading, ready, error }
-        var state = State.off
-        var text = ""
-    }
-
-    struct PackDownload: Equatable {
-        var done: Int64
-        var total: Int64
-        var text: String
-    }
-
     // MARK: Library
 
     private(set) var localTunes: [TuneMeta] = []
-    private(set) var remoteTunes: [TuneMeta] = []
-    /// Imported tunes win over the online catalogue when both have the same path.
     private(set) var tunes: [TuneMeta] = []
     private(set) var tuneMap: [String: TuneMeta] = [:]
     @ObservationIgnored private var indexOfPath: [String: Int] = [:]
     @ObservationIgnored private var searchIndex = SearchIndex([])
     @ObservationIgnored private var sortOrders: [String: [Int]] = [:]
-    @ObservationIgnored private var remoteParts: [String] = []
-    private(set) var hvscStatus = HVSCStatus()
-    private(set) var hvscManifest: HVSCCatalogue.Manifest?
-    private(set) var packDownload: PackDownload?
-    @ObservationIgnored private var packTask: Task<Void, Never>?
     private(set) var songlengths: Songlengths?
     private(set) var stil: [String: String] = [:]
-    private(set) var remoteStil: [String: String] = [:]
     private(set) var roms = ROMSet()
     private(set) var importProgress: (done: Int, total: Int)?
-    let hvscAvailable = HVSCClient.baseURL != nil
 
     var settings = Settings.load() {
         didSet { settingsChanged(from: oldValue) }
@@ -154,18 +133,28 @@ final class AppModel {
             MainActor.assumeIsolated { self?.tick() }
         }
         ticker?.tolerance = 0.03
-        await connectHVSC()
+        removeOnlineCatalogue()
+    }
+
+    /// Versions up to 0.2.1 could download the HVSC catalogue and, optionally, the whole collection (about 350 MB). App Review
+    /// rejected that (guideline 5.2.3), so it's gone; free the space it took.
+    private func removeOnlineCatalogue() {
+        Task.detached(priority: .utility) {
+            for url in [Storage.support.appending(path: "HVSC", directoryHint: .isDirectory), Storage.caches.appending(path: "Tunes", directoryHint: .isDirectory)] {
+                try? FileManager.default.removeItem(at: url)
+            }
+        }
     }
 
     // MARK: Library list
 
     /// Merging, indexing and sorting 60,000 tunes takes a moment, so it happens off the main thread.
     private func rebuildTunes() {
-        let local = localTunes, remote = remoteTunes
+        let local = localTunes
         rebuildToken += 1
         let token = rebuildToken
         Task {
-            let built = await Task.detached(priority: .userInitiated) { LibraryIndex(local: local, remote: remote) }.value
+            let built = await Task.detached(priority: .userInitiated) { LibraryIndex(local) }.value
             guard token == rebuildToken else { return }
             tunes = built.tunes
             tuneMap = built.tuneMap
@@ -173,10 +162,12 @@ final class AppModel {
             searchIndex = built.search
             sortOrders = [LibraryIndex.orderKey(.path, desc: false): Array(built.tunes.indices)]
             refreshVisible()
+            libraryReady = true
         }
     }
 
     @ObservationIgnored private var rebuildToken = 0
+    @ObservationIgnored private var libraryReady = false
     @ObservationIgnored private var sorting: Set<String> = []
 
     /// The cached order for the current sort, or nil while it is computed in the background (the list then shows path order).
@@ -341,143 +332,12 @@ final class AppModel {
         message = "Library cleared."
     }
 
-    // MARK: Online HVSC catalogue
-
-    /// Loads the catalogue from disk straight away, then checks the server for a newer release.
-    func connectHVSC(forceRefresh: Bool = false) async {
-        guard let base = HVSCClient.baseURL, settings.onlineCatalogue else {
-            // Off means nothing of HVSC's is kept, apart from an offline copy the user downloaded deliberately.
-            for name in ["manifest.json", "index.json", "stil.txt"] {
-                try? FileManager.default.removeItem(at: Storage.hvsc.appending(path: name))
-            }
-            hvscManifest = nil
-            remoteTunes = []
-            remoteParts = []
-            remoteStil = [:]
-            hvscStatus = HVSCStatus()
-            rebuildTunes()
-            return
-        }
-        let client = HVSCClient(base: base)
-        hvscStatus = HVSCStatus(state: .loading, text: "Loading the HVSC catalogue…")
-        let manifestURL = Storage.hvsc.appending(path: "manifest.json")
-        let indexURL = Storage.hvsc.appending(path: "index.json")
-        let stilURL = Storage.hvsc.appending(path: "stil.txt")
-        let cachedManifest = Storage.readJSON(HVSCCatalogue.Manifest.self, from: manifestURL)
-        do {
-            var haveIndex = false
-            if !forceRefresh, let data = try? Data(contentsOf: indexURL) {
-                try await applyIndex(data)
-                haveIndex = true
-                if let s = try? Data(contentsOf: stilURL) { remoteStil = await Task.detached { STIL.parse(latin1String(s)) }.value }
-                hvscManifest = cachedManifest
-            }
-            let manifest: HVSCCatalogue.Manifest
-            do {
-                manifest = try await client.manifest()
-            } catch {
-                if haveIndex { return } // offline: keep what we have
-                throw error
-            }
-            if manifest.index != cachedManifest?.index || !haveIndex {
-                hvscStatus = HVSCStatus(state: .loading, text: "Downloading HVSC \(manifest.hvsc) catalogue…")
-                let data = try await client.file(manifest.index)
-                try await applyIndex(data)
-                try Storage.write(data, to: indexURL, excludeFromBackup: true)
-                if let old = cachedManifest, old.hvsc != manifest.hvsc { message = "HVSC updated to \(manifest.hvsc)." }
-            }
-            if manifest.stil != cachedManifest?.stil || remoteStil.isEmpty {
-                let data = try await client.file(manifest.stil)
-                remoteStil = await Task.detached { STIL.parse(latin1String(data)) }.value
-                try Storage.write(data, to: stilURL, excludeFromBackup: true)
-            }
-            Storage.writeJSON(manifest, to: manifestURL)
-            hvscManifest = manifest
-        } catch {
-            hvscStatus = HVSCStatus(state: .error, text: "Could not load the HVSC catalogue: \(error.localizedDescription)")
-        }
-    }
-
-    private func applyIndex(_ data: Data) async throws {
-        let index = try await Task.detached(priority: .userInitiated) { try HVSCCatalogue.parseIndex(data) }.value
-        remoteTunes = index.tunes
-        remoteParts = index.parts
-        rebuildTunes()
-        hvscStatus = HVSCStatus(state: .ready, text: "HVSC \(index.hvsc) · \(index.tunes.count.formatted()) tunes")
-    }
-
-    /// Bytes of the collection stored on this device for offline play.
-    var offlinePacks: (have: Int, total: Int, bytes: Int64) {
-        guard let m = hvscManifest else { return (0, 0, 0) }
-        let have = m.parts.filter { LocalPacks.has($0.name, size: $0.size) }
-        return (have.count, m.parts.count, have.reduce(0) { $0 + Int64($1.size) })
-    }
-
-    var offlineTotalBytes: Int64 { hvscManifest?.parts.reduce(0) { $0 + Int64($1.size) } ?? 0 }
-
-    /// Downloads every pack of the collection so all tunes play offline.
-    func downloadCollection() {
-        guard packTask == nil, let base = HVSCClient.baseURL, let manifest = hvscManifest else { return }
-        let client = HVSCClient(base: base)
-        let total = manifest.parts.reduce(Int64(0)) { $0 + Int64($1.size) }
-        packTask = Task {
-            var done = manifest.parts.filter { LocalPacks.has($0.name, size: $0.size) }.reduce(Int64(0)) { $0 + Int64($1.size) }
-            packDownload = PackDownload(done: done, total: total, text: "Starting…")
-            for part in manifest.parts where !LocalPacks.has(part.name, size: part.size) {
-                if Task.isCancelled { break }
-                let before = done
-                do {
-                    try await client.downloadPack(part.name, to: LocalPacks.url(for: part.name)) { written in
-                        Task { @MainActor in
-                            self.packDownload = PackDownload(done: before + written, total: total, text: "Downloading \(part.name)…")
-                        }
-                    }
-                    done = before + Int64(part.size)
-                } catch {
-                    if !Task.isCancelled { message = "Download failed: \(error.localizedDescription)" }
-                    break
-                }
-            }
-            packDownload = nil
-            packTask = nil
-            if offlinePacks.have == manifest.parts.count { message = "The whole collection is now available offline." }
-        }
-    }
-
-    func cancelCollectionDownload() {
-        packTask?.cancel()
-        packTask = nil
-        packDownload = nil
-    }
-
-    func deleteOfflineCollection() {
-        cancelCollectionDownload()
-        try? FileManager.default.removeItem(at: Storage.hvscPacks)
-        message = "Offline copy of the collection removed."
-    }
-
-    /// Imported copy first, then the tune cache, a downloaded pack, and finally the server (cached for next time).
     private func tuneData(_ meta: TuneMeta) async throws -> [UInt8] {
-        let imported = Storage.file(in: Storage.importedFiles, path: meta.path)
-        if meta.remote == nil || localTunes.contains(where: { $0.path == meta.path }), let data = try? Data(contentsOf: imported) {
-            return [UInt8](data)
-        }
-        let cached = Storage.file(in: Storage.tuneCache, path: meta.path)
-        if let data = try? Data(contentsOf: cached) { return [UInt8](data) }
-        let parts = remoteParts
-        if let data = await Task.detached(operation: { LocalPacks.read(meta, parts: parts) }).value { return [UInt8](data) }
-        guard meta.remote != nil, let base = HVSCClient.baseURL else { throw HVSCClient.HTTPError(message: "file missing from library") }
-        let data = try await HVSCClient(base: base).tune(meta, parts: parts)
-        try? Storage.write(data, to: cached)
-        return [UInt8](data)
+        let url = Storage.file(in: Storage.importedFiles, path: meta.path)
+        return try await Task.detached { [UInt8](try Data(contentsOf: url)) }.value
     }
 
-    private func prefetchNext() {
-        guard queueIndex + 1 < queue.count, let meta = tuneMap[queue[queueIndex + 1]], meta.remote != nil else { return }
-        Task { _ = try? await tuneData(meta) }
-    }
-
-    func stilFor(_ path: String) -> String? { stil[path] ?? remoteStil[path] }
+    func stilFor(_ path: String) -> String? { stil[path] }
 
     // MARK: Playback
 
@@ -516,7 +376,6 @@ final class AppModel {
                 playing = true
                 collections.history = Array(([path] + collections.history.filter { $0 != path }).prefix(500))
                 nowPlaying.update(force: true)
-                prefetchNext()
             } catch {
                 guard token == playToken else { return }
                 loading = false
@@ -703,9 +562,6 @@ final class AppModel {
         if engineChanged && current != nil {
             load(startAt: position)
         }
-        if settings.onlineCatalogue != before.onlineCatalogue {
-            Task { await connectHVSC() }
-        }
     }
 
     private func tick() {
@@ -808,11 +664,12 @@ final class AppModel {
               let path = items.first(where: { $0.name == "path" })?.value else { return }
         let song = items.first(where: { $0.name == "song" })?.value.flatMap(Int.init)
         Task {
-            for _ in 0..<100 where tuneMap[path] == nil && hvscStatus.state == .loading {
+            // A link that launches the app arrives before the library has been read.
+            for _ in 0..<100 where tuneMap[path] == nil && !libraryReady {
                 try? await Task.sleep(for: .milliseconds(100))
             }
             guard let meta = tuneMap[path] else {
-                message = "The shared tune is not in your library or the online catalogue."
+                message = "The shared tune is not in your library."
                 return
             }
             playPaths([path])

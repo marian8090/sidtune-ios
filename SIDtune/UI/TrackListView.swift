@@ -132,37 +132,12 @@ struct TrackListView: View {
             } else {
                 switch model.view {
                 case .all:
-                    if model.hvscStatus.state == .loading {
-                        ContentUnavailableView {
-                            Label("Loading the HVSC catalogue", systemImage: "arrow.down.circle")
-                        } description: {
-                            Text(model.hvscStatus.text)
-                        } actions: {
-                            ProgressView()
-                        }
-                    } else if model.hvscAvailable && !model.settings.onlineCatalogue {
-                        ContentUnavailableView {
-                            Label("Your library is empty", systemImage: "music.note.list")
-                        } description: {
-                            Text("""
-                            Download the High Voltage SID Collection: the list of all 60,000+ tunes (about 2 MB), with each tune \
-                            fetched the first time you play it. Or add your own .sid files, a .zip or .7z, or an unpacked HVSC folder.
-                            """)
-                        } actions: {
-                            Button("Download the HVSC") { model.settings.onlineCatalogue = true }.buttonStyle(.borderedProminent)
-                            Button("Add my own music…") { importing = true }
-                        }
-                    } else {
-                        ContentUnavailableView {
-                            Label("Your library is empty", systemImage: "music.note.list")
-                        } description: {
-                            Text(model.hvscStatus.state == .error ? model.hvscStatus.text : "Add HVSC's .7z download, an unpacked HVSC folder (C64Music), .sid files or a .zip.")
-                        } actions: {
-                            if model.hvscStatus.state == .error {
-                                Button("Try again") { Task { await model.connectHVSC() } }.buttonStyle(.borderedProminent)
-                            }
-                            Button("Add music…") { importing = true }
-                        }
+                    ContentUnavailableView {
+                        Label("Your library is empty", systemImage: "music.note.list")
+                    } description: {
+                        Text("SIDtune comes without music. Add your own .sid files, a .zip or .7z archive, or a folder of tunes.")
+                    } actions: {
+                        Button("Add music…") { importing = true }.buttonStyle(.borderedProminent)
                     }
                 case .favorites:
                     ContentUnavailableView("No favorites yet", systemImage: "heart", description: Text("Swipe right on a tune or tap the heart to add it here."))

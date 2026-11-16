@@ -58,8 +58,6 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
-	<key>HVSCURL</key>
-	<string>https://pub-0f462e943b344646abb5842cc55f2898.r2.dev</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.music</string>
 	<key>LSSupportsOpeningDocumentsInPlace</key>

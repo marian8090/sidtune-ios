@@ -75,24 +75,6 @@ private func psidHeader(title: String, author: String, released: String, songs: 
     #expect(stil["/OTHER/x.sid"]?.contains("TITLE: First") == true)
 }
 
-@Test func parsesCatalogueIndex() throws {
-    let json = """
-    {"format":1,"hvsc":"85","parts":["pack-85-000.bin"],
-     "cols":["path","title","author","released","rsid","version","songs","startSong","sids","sidModel","clock","size","part","offset","lengths"],
-     "rows":[["/A/b.sid","B","C","1990",0,2,3,2,1,"8580","PAL",4000,0,1234,[60,1.5,2]],
-             ["/A/c.sid","D","E","1991",1,2,1,1,2,"6581","NTSC",500,0,5234,null]]}
-    """
-    let index = try HVSCCatalogue.parseIndex(Data(json.utf8))
-    #expect(index.hvsc == "85")
-    #expect(index.parts == ["pack-85-000.bin"])
-    #expect(index.tunes.count == 2)
-    #expect(index.tunes[0].remote == .init(part: 0, offset: 1234))
-    #expect(index.tunes[0].lengths == [60, 1.5, 2])
-    #expect(index.tunes[0].startSong == 2)
-    #expect(index.tunes[1].isRSID)
-    #expect(index.tunes[1].lengths == nil)
-}
-
 @Test func normalisesImportPaths() {
     #expect(ImportPaths.normalise("C64Music/MUSICIANS/H/x.sid") == "/MUSICIANS/H/x.sid")
     #expect(ImportPaths.normalise("Downloads/HVSC/C64Music/DEMOS/y.sid") == "/DEMOS/y.sid")

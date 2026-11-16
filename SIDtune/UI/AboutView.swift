@@ -14,12 +14,12 @@ struct AboutView: View {
                         Text("SIDtune").appFont(.largeTitle).fontWeight(.heavy).foregroundStyle(theme.accentStrong)
                         Text(Bundle.main.version).appFont(.subheadline).foregroundStyle(theme.muted)
                     }
-                    Text("A player for Commodore 64 SID music and the High Voltage SID Collection. It emulates the C64 and its SID sound chip cycle by cycle, so tunes sound the way they did on the real machine.")
-                    Text("Everything runs on this device: the emulation, your library, playlists, favorites and settings. The only network traffic is the online catalogue and the tunes you play from it.")
+                    Text("A player for Commodore 64 SID music. It emulates the C64 and its SID sound chip cycle by cycle, so tunes sound the way they did on the real machine.")
+                    Text("Everything runs on this device: the emulation, your library, playlists, favorites and settings. SIDtune doesn't use the network.")
 
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Getting started").appFont(.headline)
-                        bullet("The whole HVSC is in the Library when the online catalogue is on. Search by title, composer, year or path.")
+                        bullet("Add your own tunes with +: .sid files, a .zip or .7z archive, or a folder. Search by title, composer, year or path.")
                         bullet("Tap a tune to play it. Next and previous follow the list you started from.")
                         bullet("Swipe right on a tune to favorite it; long-press for playlists and sharing.")
                         bullet("The button with the mode name (Magic) picks the audio quality and equalizer.")
@@ -30,7 +30,7 @@ struct AboutView: View {
                         Text("Emulation: libsidplayfp with reSIDfp and SIDLite, by Leandro Nini, Antti Lankila, Simon White and contributors (GPL-2.0-or-later).")
                         Text("Pet Me 64 and Print Char 21 fonts by Kreative Korp, used under the Kreative Software Relay Fonts Free Use License.")
                         Text("Inspired by ultraSID by Toddler-Boy. SIDtune is an independent project.")
-                        Text("The music belongs to its composers. HVSC is a volunteer archive.")
+                        Text("The music belongs to its composers.")
                     }
                     .appFont(.footnote)
                     .foregroundStyle(theme.muted)

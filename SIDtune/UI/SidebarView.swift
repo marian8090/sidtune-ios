@@ -43,20 +43,12 @@ struct SidebarView: View {
                 Text("Playlists").appFont(.caption)
             }
             Section {
-                Button { importing = true } label: { Label("Add folder, files or archive…", systemImage: "folder.badge.plus") }
+                Button { importing = true } label: { Label("Add music…", systemImage: "folder.badge.plus") }
                     .disabled(model.importProgress != nil)
                 if let p = model.importProgress {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(p.total > 0 ? "Importing \(p.done.formatted()) of \(p.total.formatted())…" : "Reading files…").appFont(.footnote)
                         ProgressView(value: p.total > 0 ? Double(p.done) / Double(p.total) : 0)
-                    }
-                }
-                if model.hvscStatus.state != .off {
-                    HStack(spacing: 8) {
-                        if model.hvscStatus.state == .loading { ProgressView().controlSize(.small) }
-                        Text(model.hvscStatus.text)
-                            .appFont(.footnote)
-                            .foregroundStyle(model.hvscStatus.state == .error ? .red : theme.muted)
                     }
                 }
                 Button { model.settingsOpen = true } label: { Label("Settings", systemImage: "gearshape") }

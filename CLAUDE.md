@@ -22,17 +22,18 @@ simulator.
 - `project.yml`: XcodeGen spec, the source of truth for the Xcode project (targets, Info.plist keys, background audio). Don't hand-edit
   `SIDtune.xcodeproj`.
 - `SIDtune/`: the app.
-  - `App/AppModel.swift`: all app state and logic (port of the web app's `state.ts`): library, HVSC catalogue, queue,
-    shuffle/repeat, favorites/playlists/history, deep links. The HVSC catalogue is opt-in
-    (`settings.onlineCatalogue`, off by default): nothing from HVSC ships in the app bundle. `App/Settings.swift`: `Settings` (UserDefaults), `Storage` paths.
+  - `App/AppModel.swift`: all app state and logic (port of the web app's `state.ts`): library, queue, shuffle/repeat,
+    favorites/playlists/history, deep links. The library holds only what the user imports: the web app's online HVSC catalogue was
+    removed after App Review rejected it (guideline 5.2.3, unauthorised media downloads). Don't add in-app downloading of music.
+    `App/Settings.swift`: `Settings` (UserDefaults), `Storage` paths.
   - `Audio/`: `PlaybackEngine` (render thread → ring buffer → `AVAudioSourceNode`, seek, mutes, FX, visualiser snapshots),
     `RenderCache` (instant-seek pre-render on its own thread), `NowPlayingCenter` (lock screen).
-  - `Library/`: `HVSCClient` (catalogue, Range requests, offline packs), `Importer` (folders, files, zips), `LibraryIndex`.
+  - `Library/`: `Importer` (folders, files, .zip and .7z archives), `LibraryIndex`.
   - `UI/`: SwiftUI views. `RootView` is a `NavigationSplitView` (collapses to a stack on iPhone) with Now Playing as an
     `.inspector` on iPad and a sheet on iPhone, and `PlayerBar` along the bottom. Themes and fonts live in `Theme.swift`.
   - `Resources/Docs/MANUAL.md`: the in-app Help (iOS edition of the web manual). Keep it in step with user-visible changes.
 - `Packages/SIDEngine/`: local Swift package with three libraries: `SIDEngine` (emulator), `SIDLibrary` (PSID, Songlengths,
-  STIL, catalogue index, zip and 7z readers, search) and `SIDFX` (the audio quality modes and EQ, port of `fx.ts`).
+  STIL, zip and 7z readers, search) and `SIDFX` (the audio quality modes and EQ, port of `fx.ts`).
   - `Sources/CLZMA/lzma`: LZMA SDK 25.01 (public domain), vendored unmodified; upgrade by copying the same files from a newer SDK's `C/`.
     `Sources/CLZMA/sevenzip.c` is ours: it uses the SDK only to parse the 7z header and decodes blocks itself as pull stages, because
     the SDK's extractor holds a whole solid block in memory and rejects HVSC's two-coder BCJ2 layout. HVSC's `.7z` needs PPMd

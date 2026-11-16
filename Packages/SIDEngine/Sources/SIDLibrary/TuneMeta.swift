@@ -2,15 +2,6 @@ import Foundation
 
 /// One tune in the library. Port of `TuneMeta` in src/lib/types.ts.
 public struct TuneMeta: Codable, Hashable, Sendable, Identifiable {
-    public struct Remote: Codable, Hashable, Sendable {
-        public var part: Int
-        public var offset: Int
-        public init(part: Int, offset: Int) {
-            self.part = part
-            self.offset = offset
-        }
-    }
-
     /// Normalised HVSC-style path, e.g. /MUSICIANS/H/Hubbard_Rob/Commando.sid
     public var path: String
     public var title: String
@@ -27,8 +18,6 @@ public struct TuneMeta: Codable, Hashable, Sendable, Identifiable {
     /// "PAL", "NTSC", "PAL/NTSC" or "?".
     public var clock: String
     public var size: Int
-    /// Where the file lives inside the online catalogue's packs.
-    public var remote: Remote?
     /// Song lengths in seconds, one per subtune, when known.
     public var lengths: [Double]?
 
@@ -38,7 +27,7 @@ public struct TuneMeta: Codable, Hashable, Sendable, Identifiable {
 
     public init(
         path: String, title: String, author: String, released: String, isRSID: Bool, version: Int, songs: Int, startSong: Int,
-        sids: Int, sidModel: String, clock: String, size: Int, remote: Remote? = nil, lengths: [Double]? = nil
+        sids: Int, sidModel: String, clock: String, size: Int, lengths: [Double]? = nil
     ) {
         self.path = path
         self.title = title
@@ -52,7 +41,6 @@ public struct TuneMeta: Codable, Hashable, Sendable, Identifiable {
         self.sidModel = sidModel
         self.clock = clock
         self.size = size
-        self.remote = remote
         self.lengths = lengths
     }
 

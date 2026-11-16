@@ -12,8 +12,7 @@ struct Backup: Codable {
     var settings: BackupSettings?
 }
 
-/// Settings under the web app's key names and values. The online catalogue is left out: it is opt-in on iOS but on by
-/// default on the web, so a backup from either side shouldn't switch it.
+/// Settings under the web app's key names and values. The web app's online-catalogue setting is ignored: iOS has none.
 struct BackupSettings: Codable {
     var engine: String?
     var sidModel: String?

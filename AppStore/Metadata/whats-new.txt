@@ -1,0 +1,2 @@
+• Import .7z archives, including a whole C64Music collection in one go, without unpacking it first. Song lengths and STIL notes come along automatically.
+• SIDtune now plays only music you import and no longer connects to the internet. The online catalogue has been removed, and the space its data used is freed.

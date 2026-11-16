@@ -30,7 +30,6 @@
   <ol>
     <li><a href="#music">Getting music</a>
       <ol>
-        <li><a href="#hvsc">Online HVSC catalogue</a></li>
         <li><a href="#own-files">Your own files</a></li>
         <li><a href="#songlengths">Song lengths &amp; STIL</a></li>
         <li><a href="#roms">C64 ROMs</a></li>
@@ -84,23 +83,20 @@
 
 <section id="music">
   <h2><span class="num">01</span>Getting music</h2>
-  <p>There are two ways to fill your library, and you can use both at once.</p>
-
-  <h3 id="hvsc">The online HVSC catalogue</h3>
-  <p>No music is included with the app. Tap <em class="path">Download the HVSC</em> in the empty library (or turn on <em class="path">Settings → Online HVSC</em>) and the whole High Voltage SID Collection (HVSC, more than 60,000 tunes) appears in your library. Only the list is downloaded up front (about 2&nbsp;MB); each tune is fetched the first time you play it and kept for next time. The list refreshes itself when a new HVSC release comes out. Turning the catalogue off removes the list again.</p>
-  <p><strong>Download the whole collection.</strong> <em class="path">Settings → Online HVSC → Download the whole collection</em> stores every tune on your device (about 350&nbsp;MB) so everything plays without a connection. Keep SIDtune open until it finishes. <em class="path">Remove offline copy</em> frees the space again.</p>
+  <p>SIDtune comes without any music: you add tunes you already have.</p>
 
   <h3 id="own-files">Your own files</h3>
-  <p>Tap <kbd>+</kbd> (or <em class="path">Add folder, files or zip…</em> in the sidebar) and pick:</p>
+  <p>Tap <kbd>+</kbd> (or <em class="path">Add music…</em> in the sidebar) and pick:</p>
   <ul>
+    <li>HVSC's own download, <code>HVSC_xx-all-of-them.7z</code>, as it is: no need to unpack it,</li>
     <li>an unpacked HVSC folder (pick the <code>C64Music</code> folder),</li>
     <li>loose <code>.sid</code> files,</li>
-    <li>a <code>.zip</code> containing either.</li>
+    <li>a <code>.zip</code> or <code>.7z</code> containing any of these.</li>
   </ul>
-  <p>You can also open a <code>.sid</code> file in SIDtune from the Files app or another app's share sheet. Tunes you import are copied into SIDtune, so they stay available offline. If an imported tune has the same path as one in the online catalogue, your copy wins.</p>
+  <p>Importing the whole HVSC takes about a minute and needs about 400&nbsp;MB of free space; keep SIDtune open until it finishes. Afterwards you can delete the <code>.7z</code>. You can also open a <code>.sid</code> or <code>.7z</code> file in SIDtune from the Files app or another app's share sheet. Tunes you import are copied into SIDtune, so they play without a connection.</p>
 
   <h3 id="songlengths">Song lengths and STIL notes</h3>
-  <p>SID tunes usually loop forever, so SIDtune needs to know how long each one is. HVSC's <code>DOCUMENTS/Songlengths.md5</code> provides that, and <code>DOCUMENTS/STIL.txt</code> adds background notes (composer comments, cover versions, trivia) shown in Now Playing. Both are picked up automatically when you import an HVSC folder, and the online catalogue includes them. You can also load them under <em class="path">Settings → Collection data</em>. Tunes without a known length play for the default length set in Settings (3 minutes unless you change it).</p>
+  <p>SID tunes usually loop forever, so SIDtune needs to know how long each one is. HVSC's <code>DOCUMENTS/Songlengths.md5</code> provides that, and <code>DOCUMENTS/STIL.txt</code> adds background notes (composer comments, cover versions, trivia) shown in Now Playing. Both are picked up automatically when you import HVSC's <code>.7z</code> or an HVSC folder. You can also load them under <em class="path">Settings → Collection data</em>. Tunes without a known length play for the default length set in Settings (3 minutes unless you change it).</p>
 
   <h3 id="roms">C64 ROMs</h3>
   <p>A small number of tunes (RSID tunes and some that rely on BASIC) need the C64's own KERNAL, BASIC and CHARGEN ROMs. These are copyrighted, so SIDtune cannot include them. If you own copies, add them under <em class="path">Settings → C64 ROMs</em>.</p>
@@ -169,7 +165,7 @@
 
 <section id="sharing">
   <h2><span class="num">05</span>Sharing</h2>
-  <p><em>Share</em> in Now Playing (or on a long-pressed tune) sends a link that opens the tune (and subtune) in SIDtune on another iPhone or iPad. The tune has to be in that device's library or the online catalogue.</p>
+  <p><em>Share</em> in Now Playing (or on a long-pressed tune) sends a link that opens the tune (and subtune) in SIDtune on another iPhone or iPad. The tune has to be in that device's library.</p>
 </section>
 
 <section id="appearance">
@@ -209,7 +205,7 @@
     <li>Everything SIDtune stores (imported tunes, playlists, favorites, history, settings) lives on your device. Deleting the app removes it.</li>
     <li><em class="path">Settings → Backup → Save backup</em> saves your favorites, playlists, history and settings as a small file, wherever you choose in the Files app. <em class="path">Restore a backup</em> loads such a file and replaces what's there. It is the same file the SIDtune web app saves, so you can move your favorites and playlists between the web app and iPhone or iPad. Imported tunes are not part of the backup; import them again.</li>
     <li><em class="path">Settings → Library → Clear library</em> removes imported tunes, song lengths and STIL notes but keeps favorites and playlists.</li>
-    <li>The only network traffic is fetching the online catalogue and the tunes you play from it. See the <a href="privacy.html">Privacy Policy</a>.</li>
+    <li>SIDtune doesn't use the network. See the <a href="privacy.html">Privacy Policy</a>.</li>
   </ul>
 </section>
 
@@ -226,7 +222,7 @@
 
 <section id="about">
   <h2><span class="num">10</span>About the music</h2>
-  <p>The tunes belong to their composers. <a href="https://www.hvsc.c64.org/">HVSC</a> is a volunteer archive. SIDtune is inspired by ultraSID but is an independent project. The emulation is <a href="https://github.com/libsidplayfp/libsidplayfp">libsidplayfp</a> (reSIDfp and SIDLite). The Pet Me 64 font used on this site is by <a href="https://www.kreativekorp.com/software/fonts/">Kreative Korp</a> (<a href="fonts/Kreative-FreeLicense.txt">licence</a>).</p>
+  <p>The tunes belong to their composers. SIDtune is inspired by ultraSID but is an independent project. The emulation is <a href="https://github.com/libsidplayfp/libsidplayfp">libsidplayfp</a> (reSIDfp and SIDLite). The Pet Me 64 font used on this site is by <a href="https://www.kreativekorp.com/software/fonts/">Kreative Korp</a> (<a href="fonts/Kreative-FreeLicense.txt">licence</a>).</p>
   <a class="top-link" href="#top">↑ Back to top</a>
 </section>
 
@@ -238,7 +234,7 @@
   <a href="index.html">Home</a>
   <a href="privacy.html">Privacy Policy</a>
   <a href="support.html">Support</a>
-  <span class="spacer">The tunes belong to their composers. HVSC is a volunteer archive.</span>
+  <span class="spacer">The tunes belong to their composers.</span>
 </footer>
 
 </body>

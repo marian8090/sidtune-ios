@@ -1,24 +1,16 @@
 import Foundation
 import SIDLibrary
 
-/// The merged library with its lookup tables and search index, built off the main thread.
+/// The library with its lookup tables and search index, built off the main thread.
 struct LibraryIndex: Sendable {
     let tunes: [TuneMeta]
     let tuneMap: [String: TuneMeta]
     let indexOfPath: [String: Int]
     let search: SearchIndex
 
-    /// Imported tunes win over the online catalogue when both have the same path. The result is in path order.
-    init(local: [TuneMeta], remote: [TuneMeta]) {
-        var merged: [TuneMeta]
-        if local.isEmpty {
-            merged = remote
-        } else {
-            var map = Dictionary(remote.map { ($0.path, $0) }, uniquingKeysWith: { a, _ in a })
-            for t in local { map[t.path] = t }
-            merged = Array(map.values)
-        }
-        merged.sort { $0.path.utf8.lexicographicallyPrecedes($1.path.utf8) }
+    /// The result is in path order.
+    init(_ library: [TuneMeta]) {
+        let merged = library.sorted { $0.path.utf8.lexicographicallyPrecedes($1.path.utf8) }
         tunes = merged
         tuneMap = Dictionary(merged.map { ($0.path, $0) }, uniquingKeysWith: { a, _ in a })
         indexOfPath = Dictionary(merged.enumerated().map { ($1.path, $0) }, uniquingKeysWith: { a, _ in a })

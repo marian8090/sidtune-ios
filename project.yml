@@ -8,8 +8,8 @@ options:
 settings:
   base:
     SWIFT_VERSION: "6.0"
-    MARKETING_VERSION: "0.2.0"
-    CURRENT_PROJECT_VERSION: "2"
+    MARKETING_VERSION: "0.3.0"
+    CURRENT_PROJECT_VERSION: "3"
 packages:
   SIDEngine:
     path: Packages/SIDEngine
@@ -40,8 +40,6 @@ targets:
         LSApplicationCategoryType: public.app-category.music
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
-        # The online HVSC catalogue (see the web app's docs/HVSC-HOSTING.md). Empty turns the feature off.
-        HVSCURL: https://pub-0f462e943b344646abb5842cc55f2898.r2.dev
         UIBackgroundModes: [audio]
         UILaunchScreen: {}
         UIAppFonts: [PetMe64.ttf, PrintChar21.ttf]
