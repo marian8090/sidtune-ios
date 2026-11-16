@@ -1,0 +1,38 @@
+SIDtune plays Commodore 64 music the way it sounded in the eighties. It emulates the C64 and its legendary SID sound chip cycle by cycle, so every filter sweep, arpeggio and sampled drum comes out just like on the real machine.
+
+THE WHOLE HVSC, ONE TAP AWAY
+Turn on the online catalogue and the entire High Voltage SID Collection appears in your library: more than 60,000 tunes by Rob Hubbard, Martin Galway, Ben Daglish, Jeroen Tel, Chris Hülsbeck and thousands more. Only a 2 MB list is downloaded up front; each tune is fetched the first time you play it and kept for next time. Want it all offline? Download the whole collection (about 350 MB) and play anywhere, no connection needed.
+
+BRING YOUR OWN TUNES
+Import a C64Music folder, loose .sid files or a .zip, or open a .sid straight from the Files app or another app's share sheet. Song lengths and STIL notes (composer comments, cover versions and trivia) are picked up automatically.
+
+FIND ANYTHING, INSTANTLY
+Search 60,000 tunes by title, composer, year or path as you type. Sort by title, composer or release. Favorite a tune with a swipe, build playlists, and let History remember the last 500 tunes you played.
+
+SEE THE MUSIC
+Now Playing shows a scrolling piano roll of every voice on every SID chip, coloured by waveform, plus an oscilloscope and the live filter settings. Mute voices 1, 2 and 3 one by one to hear how a tune is built. Switch between subtunes and read the STIL notes while you listen.
+
+FIVE WAYS TO HEAR IT
+• Real: through a tiny monitor speaker, as most people heard it back then
+• Pure: the raw chip, nothing added
+• Magic: gentle stereo widening, delay and reverb (the default)
+• Epic: wide, deep and bold
+• Mythic: everything cranked to 11
+A 3-band equalizer fine-tunes the result.
+
+FOR PURISTS
+Choose the accurate reSIDfp engine or the lighter SIDLite. Use the chip each tune was written for, or force the original 6581 or the later 8580. Pick PAL or NTSC timing, boost digis on the 8580, and add your own C64 KERNAL, BASIC and CHARGEN ROMs for the tunes that need them. Instant seeking renders the tune in the background so the slider jumps anywhere immediately.
+
+MADE FOR IPHONE AND IPAD
+• Keeps playing in the background and with the screen locked
+• Lock screen, Control Center, headphone and CarPlay controls
+• On iPad, Now Playing sits in its own column, with keyboard shortcuts for everything
+• Share a link that opens a tune and subtune in SIDtune on another device
+
+LOOKS THE PART
+Six themes, including C64 Blue, Green Phosphor and Amber Phosphor, and authentic retro fonts: the C64's own lettering or the Apple II's 40-column text.
+
+PRIVATE BY DESIGN
+No account, no ads, no tracking. Your library, playlists, favorites and settings stay on your device. Back them up to a small file, which also works with the SIDtune web app. The only network traffic is the online catalogue and the tunes you play from it.
+
+The tunes belong to their composers; HVSC is a volunteer archive. Emulation by libsidplayfp (reSIDfp and SIDLite).

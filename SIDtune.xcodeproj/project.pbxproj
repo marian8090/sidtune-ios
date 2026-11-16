@@ -24,6 +24,7 @@
 		4D9ED70117FC67D8132E42BF /* Backup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C72999CB83CC40FF77CE780 /* Backup.swift */; };
 		613BC557DD5757BCFCB93C42 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61FFEDA934764C27C448BCE /* AboutView.swift */; };
 		6F6AC9B7C1D8CF646C6ABA23 /* NowPlayingCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7DBD676BD03603E8B9427E5 /* NowPlayingCenter.swift */; };
+		7749989F86ACCFB8320A3B93 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8F0B9381B992E27BFEFF9409 /* Assets.xcassets */; };
 		8BAA8C763C2003B27E9619FE /* HVSCClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B97E378EAECC4B5F5647A88 /* HVSCClient.swift */; };
 		ABCB9C0085788D7DFA33D8A2 /* NowPlayingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95235D056F3BF0571D783EE7 /* NowPlayingView.swift */; };
 		AE3E23039BB2009CB6690881 /* Kreative-FreeLicense.txt in Resources */ = {isa = PBXBuildFile; fileRef = 02B2E8C4C9E8CFCBF9CBB02E /* Kreative-FreeLicense.txt */; };
@@ -51,6 +52,7 @@
 		5B97E378EAECC4B5F5647A88 /* HVSCClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HVSCClient.swift; sourceTree = "<group>"; };
 		80C262748E2E2D6AEFE4C150 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		8A1A790762FA788CCCD99857 /* PlayerBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerBar.swift; sourceTree = "<group>"; };
+		8F0B9381B992E27BFEFF9409 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		95235D056F3BF0571D783EE7 /* NowPlayingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingView.swift; sourceTree = "<group>"; };
 		98DCDB2AC68D6F3F99BAB19D /* LibraryIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryIndex.swift; sourceTree = "<group>"; };
 		9C72999CB83CC40FF77CE780 /* Backup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backup.swift; sourceTree = "<group>"; };
@@ -112,6 +114,7 @@
 		544BA864E8BA4AEDD512A6C5 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				8F0B9381B992E27BFEFF9409 /* Assets.xcassets */,
 				A5F51DB311D76E201AE6AF48 /* Docs */,
 				D91D87B10D74C83149E3E7A6 /* Fonts */,
 			);
@@ -259,6 +262,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7749989F86ACCFB8320A3B93 /* Assets.xcassets in Resources */,
 				AE3E23039BB2009CB6690881 /* Kreative-FreeLicense.txt in Resources */,
 				45FC835E873CAE4369FD0A83 /* MANUAL.md in Resources */,
 				C073BE570C581A99297B1233 /* PetMe64.ttf in Resources */,
